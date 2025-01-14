@@ -21,7 +21,7 @@ jobs:
           image: 18810919727/latex_diff:v1
           options: -v ${{ github.workspace }}:/dir:rw
           run: |
-            latexdiff /dir/2024-10.tex /dir/new.tex > /dir/diff.tex # 此处可以按需替换 old.tex、new.tex
+            latexdiff /dir/2024-12-04.tex /dir/new.tex > /dir/diff.tex # 此处可以按需替换 old.tex、new.tex
             echo "Generating diff.tex successfully"
       - name: git add & commit
         run: |
