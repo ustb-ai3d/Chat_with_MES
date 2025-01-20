@@ -238,13 +238,16 @@ country={China}}
 %% Text of abstract
 % Abstract text.
 
-This paper presents Chat with MES (CWM), a large language model (LLM) agent system, which integrates LLMs into the Manufacturing Execution System (MES), serving as the "ears, mouth, and the brain". 
-This technique promotes a paradigm shift in MES interactions from Graphical User Interface (GUI) to "interacting through natural language", offering a more natural and efficient way to manipulate the manufacturing system.
-In contrast to traditional GUI, both the maintenance costs for developers and the learning costs for workers are significantly reduced.
-This paper also contributes two technical improvements to address the challenges of using LLM in serious manufacturing scenarios.
-The first innovation is request rewriting, which enhances understanding and pre-processing of non-standardized and ambiguous user inputs by pre-identifying common entities in manufacturing, such as customers, products, and materials.
-The second is Multi-Step Dynamic Operations Generation, which decomposes a complex request into a sequence of simple operations, such as executing an SQL command or invoking a tool. 
-A case study conducted on a simulated garment MES with 55 manually designed requests demonstrates the high execution accuracy of CWM (80\%) and the improvement brought by query rewriting (9.1\%) and Multi-Step Dynamic operations generation (18.2\%). 
+This paper presents Chat with MES (CWM), an AI agent system, which integrates LLMs into the Manufacturing Execution System (MES), serving as the "ears, mouth, and the brain". 
+This system promotes a paradigm shift in MES interactions from Graphical User Interface (GUI) to natural language interface", offering a more natural and efficient way for workers to manipulate the manufacturing system.
+Compared with the traditional GUI, both the maintenance costs for developers and the learning costs and the complexity of use for workers are significantly reduced.
+This paper also contributes two technical improvements to address the challenges of using LLM-Agent in serious manufacturing scenarios.
+The first one is Request Rewriting, designed to rephrase or automatically follow up on non-standardized and ambiguous requests from users.
+% which enhances understanding and pre-processing of non-standardized and ambiguous user inputs by pre-identifying common entities in manufacturing, such as customers, products, and materials.
+The second innovation is the Multi-Step Dynamic Operations Generation, which is a pre-execution planning technique similar to Chain-of-Thought (COT), used to enhance the success rate of handling complex tasks involving multiple operations.
+% . It is a approximated to Chain of Thought
+% The second innovation is Multi-Step Dynamic Operations Generation, which decomposes a complex request into a sequence of simple operations, such as executing an SQL command or invoking a tool. 
+A case study conducted on a simulated garment MES with 55 manually designed requests demonstrates the high execution accuracy of CWM (80\%) and the improvement achieved through query rewriting (9.1\%) and Multi-Step Dynamic operations generation (18.2\%). 
 The source code of CWM, along with the simulated MES and benchmark requests, is publicly accessible.
 
 
@@ -265,7 +268,7 @@ The source code of CWM, along with the simulated MES and benchmark requests, is 
 \begin{highlights}
 \item This research proposes the "Chat with MES" (CWM), a novel MES operation paradigm.
 CWM offers an alternative to the graphical user interface by enabling users to interact with the MES system through linguistic commands.
-\item To handle complex users' requests in manufacturing, the Multi-step Dynamical Operations Generation is proposed to automatically break down the intricate task as a chain of basic operations.
+\item To handle complex users' requests in manufacturing, the Multi-step Dynamical Operations Generation is proposed to automatically break down the intricate task as a chain of basic executable operations with parameter placeholders.
 The decomposition significantly enhances the controllability and reliability of the LLM and facilitates the incorporation of prior knowledge.
 \item An experimental environment was established using a simulated garment manufacturing system. Furthermore, a question-and-answer dataset comprising 55 manually crafted queries was created to serve as a new benchmark for the task of operating a Manufacturing Execution System (MES) through conversation. 
 The CWM exhibits a commendable execution success rate of 80\%, surpassing the performance of the original GPT-4, which records a success rate of 60\%.
@@ -306,43 +309,63 @@ Efficient and friendly interaction will significantly reduce the workload of wor
 
 % Despite its importance, MES faces several challenges, particularly in environments where production processes are complex and involve intricate logic.
 
-Since the Graphical User Interface appeared~\cite {martinez2011graphical}, the primary way through which workers operate a MES is the Graphical User Interface.
+Since the Graphical User Interface (GUI) appeared~\cite {martinez2011graphical}, 
+it has become the primary way for workers to operate an MES.
+% it the primary way through which workers operate an MES is the .
 Users manipulate the graphical elements within a specific system page and receive feedback from the changeable elements.
-Although the frameworks for developing GUI, including web pages and application pages, have evolved over several decades and are sufficiently mature, they still suffer some limitations in real developments and utilization.
-The first limitation arises from the programmers responsible for development.
-Developing and maintaining an MES, as a non-standardized and customized software, demands substantial labor effort.
+The GUI is typically developed alongside the core components of the MES by the software engineering team.
+Although the GUI in has evolved over several decades and is sufficiently mature, it still suffer some limitations in real developments and utilization.
+% Although the frameworks for developing GUI, including web pages and application pages, have evolved over several decades 
+The first limitation arises from the programmers responsible for coding.
+% Developing and maintaining an MES, as a non-standardized and customized software, demands substantial labor effort.
+Because MES is a kind of non-standardized and customized software, it demands substantial labor effort for developing and maintaining the GUI.
 Even after project delivery, users may still present various new requirements and the developers have to intervene and revise the logic of software and data access interfaces.
-Many MES development projects fail and are abandoned by factory users because the development team refuses to continue maintaining the systems.
+Many MES development projects fail and are abandoned by factory users because the development team refuses to continue maintaining the systems~\cite{pr10112173}.
 The second issue is the learning cost and operational complexity for users.
 A new worker must thoroughly learn from the software guidelines and undergo training before performing operations.
-For systems designed for extremely complicated manufacturing processes, the cost of training an experienced MES operator is much more substantial~\cite{li2022application}.
+In the utilization stage, the workload is also significant due to numerous repetitive and tedious operations.
+For systems designed for extremely complicated manufacturing processes, the cost for developing and using GUI is much more substantial~\cite{li2022application}.
 
 % Literature Review
-To reduce the labor cost of software development and maintenance,
+Advanced software engineering methods are suggested to address challenges in development and implementation. 
+From the perspective of reducing the labor cost of software development and maintenance,
 emerging software development techniques have explored paradigms such as no-code~\cite{rokis2022challenges} and low-code~\cite{cabot2020positioning} development platforms.
-However, these platforms face challenges in the development of MES.
+However, these platforms face usability--plasticity dilemma.
 % High cost of learning new software and frameworks.
-The major one is the trade-off between usability and extensibility: 
-% Components encapsulation can enhance usability and reduce the development cost.
-With component encapsulation, individuals without programming experience can quickly build a software system through drag-and-drop interfaces.
-However, excessive encapsulation will adversely affect extensibility, making it impossible to meet users' customized needs.
+% The major one is the trade-off between usability and extensibility. 
+Component encapsulation allows non-programmers to swiftly create a software system through drag-and-drop interfaces.
+However, excessive encapsulation will adversely affect extensibility, making it impossible to meet customized needs.
+From a worker's experience standpoint in relation to usage, Robotic Process Automation (RPA)\cite{siderska2020robotic} has garnered substantial interest as a means of automating repetitive and labor-intensive business processes through software bots.
+However, the functions of most RPA engines are generally limited to specific workflows and certain GUI pages.
+They merely serve as supplemental tools to the GUI rather than substitutes for addressing the underlying drawbacks of GUI.
 % When the platform cannot meet the user's customized needs, embedding natively developed pages becomes very challenging.
 
-Recent advancements in large language models (LLMs) have the potential to revolutionize the interaction between humans and information systems.
-This is achieved by understanding user requirements expressed in natural language and invoking the services within the information system, such as Web Shopping~\cite{yao2022webshop} and Web Browsing\cite{deng2024mind2web}.
+Recent advances in large language models (LLMs) have the potential to revolutionize the interaction between humans and information systems.
+%======================================================================
+% 第一篇引用
+%The rapid spread of AI applications makes it necessary to develop new approaches for future Human-Computer interfaces, which differ from classical interfaces due to AI's human-like cognitive, self-executing, and self-adapting capabilities~\cite{holzinger2022personas}.
+%======================================================================
+This can be achieved by understanding the user requirements expressed in natural language and invoking the services within the information system.
+Some successful cases have been observed in Web Shopping~\cite{yao2022webshop} and Web Browsing\cite{deng2024mind2web}.
 % As a typical information system, MES can be accessed by large language models (LLMs), allowing us to equip it with a conversational interface as the user interface.
-It is intuitive to access an MES using a large language model and to equip it with a conversational interface as the user interface.
+%=======================================================================
+% 第二篇引用
+%Trust can be achieved through counterfactual explanations, which allow people to familiarize themselves with unknown processes by understanding the hypothetical input conditions under which the outcome changes~\cite{delser2024counterfactual}. This approach is particularly important for enhancing the reliability and trustworthiness of AI systems in critical applications.
+%========================================================================
+Accessing an MES through a conversational interface powered by an LLM is straightforward. 
 However, manufacturing is a typical serious and complicated scenario.
-Utilizing LLMs to manipulate MES presents two technical difficulties.
-First, regarding user input, the inherent flexibility of natural language often results in ambiguity~\cite{yadav2021comprehensive}. 
+It introduces two technical challenges when utilizing LLMs to manipulate a MES.
+First, in terms of user input, the inherent flexibility of natural language often leads to ambiguity in user input~\cite{yadav2021comprehensive}. 
 % It conflicts with the requirement for precise instructions necessary to ensure reliable MES operations.
 It contradicts the need for precise instructions, which are essential for reliable operations in MES.
-From the perspective of handling a request,
-a user request may necessitate numerous database operations and service calls, presenting a challenge for existing large language models (LLMs) to complete this task end-to-end.
+An important research topic is enabling LLM systems to identify accurate information from incorrect or ambiguous queries.
+From the perspective of handling a request, a user request may involve numerous database operations and service calls, presenting a challenge for existing large language models (LLMs) to accurately execute all steps.
 % which are beyond the current intellectual capabilities of LLMs.
 Manufacturing is a serious application domain and many operations involve atomicity and transactional properties. 
-Inaccurate information and operations can lead to severe consequences.
+For the LLM Agent, the procedure for processing requests and the operations it executes have to be governed by pre-established factory management guidelines. 
+Inaccurate operations can lead to severe consequences.
 These two issues must be addressed before using an LLM-based interface to manipulate the real MES.
+% The second research question this paper focusing is about 
 
 % leading to over-reliance on human knowledge and losing generalization across various manufacturing scenarios.
 % The need for absolutely accurate instructions to ensure reliable MES operations conflicts with the inherent ambiguity of natural language, where user inputs often contain ambiguities.
@@ -375,23 +398,33 @@ These two issues must be addressed before using an LLM-based interface to manipu
     \caption{The comparison between the traditional GUI-based framework and CWM.}
     \label{fig:cmp_MES_CWM}
 \end{figure}
+
 % The paper proposes 
-This paper presents a platform entitled "Chat with MES" (CWM) that is developed to replace the traditional GUI of MES with conversational interactions.
+This paper presents a system entitled "Chat with MES" (CWM) to replace the traditional GUI of MES with conversational interactions.
+%=========================================================================
+%In the context of designing such human-AI interfaces for various heterogeneous groups of people, appropriate methodological approaches are required.
+%Personas are very important in the context of human-centered development because they map the mental models of users to specific contexts.
+%The rapid spread of AI applications makes it necessary to develop new approaches for future human-AI interfaces, which differ from classical human-computer interfaces due to AI's human-like cognitive, self-executing, and self-adapting capabilities~\cite{holzinger2022personas}.
+%=========================================================================
 % This manuscript presents a platform entitled "Chat with MES" (CWM) that is specifically developed to supplant the conventional graphical user interface of Manufacturing Execution Systems (MES) with conversational interactions. Figure
 Figure~\ref{fig:cmp_MES_CWM} presents the differences between using CWM and traditional GUI to manipulate MES.
 The CWM obviates the necessity for developing both front-end and back-end software, in addition to reducing the expenses associated with system maintenance.
-Furthermore, we propose two technical advancements aimed at addressing the challenges associated with ambiguous user inputs and intricate tasks.
+Furthermore, we propose two technical advancements to address the challenges associated with ambiguous user inputs and complicated tasks.
 \textbf{1) Query Rewriting}: This module addresses the problem of ambiguous and inaccurate user inputs by maintaining a private context base to record named entity information and rewrite users' requests. 
 % Additionally, it employs multi-turn dialogues to gather more information and eliminate ambiguities.
 \textbf{2) Multi-step Dynamical Operations Generation}: 
 % To best handle complicated users' requests, we combine the Text2SQL and LLM-Agent to generate and execute operations dynamically based on a pre-defined basic operations tool and a relational database. 
 % The original task is decomposed as a series of basic operations.
 % Each operation corresponds to either invoking a service in the MES or directly generating an SQL command to access the database.
-To effectively handle complicated user requests, the original task is deconstructed into a sequence of fundamental operations executed step-by-step.
-Each operation involves invoking a service from the MES's predefined services pool, generating an SQL command for direct access to the production database, or performing reasoning and inference based on context.
-We evaluated the CWM on a simulated garment MES and a manually designed dataset involving 55 requests.
+To effectively handle complicated user requests, the Multi-step Dynamical Operations Generation pre-plans a chain of basic executable operations with parameter placeholders and execute the operations one-by-one.
+Each operation involves either invoking a service from the MES's predefined services pool, generating an SQL command for direct access to the production database, or performing reasoning and inference based on context.
+The initial decomposition significantly enhances the controllability and reliability of the LLM and facilitates the incorporation of prior knowledge.
+%======================================================================
+%Trust can be achieved through counterfactual explanations, which allow people to familiarize themselves with unknown processes by understanding the hypothetical input conditions under which the outcome changes~\cite{delser2024counterfactual}. This approach is particularly important for enhancing the reliability and trustworthiness of AI systems in critical applications.
+%======================================================================
+We evaluated the CWM on a simulated garment MES and a manually designed questions-and-answers dataset involving 55 requests.
 The garment manufacturing execution system (MES) is equipped with a relational database consisting of 16 tables, encapsulating the typical components encountered in actual garment production.
-The designed requests encompass the majority of questions that may arise during actual use by the two user roles: customers, workers, and managers.
+The designed requests encompass the major cases that may arise during actual use by the two user roles: workers, and managers.
 % involving common questions and operation .
 The quantitative findings indicate a high execution accuracy of the CWM at 80\%, along with the enhancement achieved through query rewriting, which contributes an improvement of 9.1\%, and the generation of Multi-Step Dynamic operations, which results in an advancement of 18.2\%.
 % All operational plans are dynamically generated based on the responses from the preceding operation step.
@@ -402,36 +435,67 @@ The quantitative findings indicate a high execution accuracy of the CWM at 80\%,
 
 % this stage decomposes intricate problems into manageable steps through dynamic SQL generation.
 
-The contributions of this paper are threefold:
+The contributions of this paper are threefold.
 
-1) We propose "Chat with MES," a novel MES operation paradigm that provides users with an interface for manipulating the MES system via language.
+1) We propose "Chat with MES," a novel MES operation paradigm that provides users with an interface for manipulating the MES system via natural language.
 
 2) The Multi-step Dynamical Operations Generation is proposed to handle complex user queries by executing a sequence of basic operations. This technique ensures the controllability and reliability of CWM in serious manufacturing scenarios.
 
-3) An experimental environment was established using a simulated garment manufacturing system. Furthermore, a question-and-answer dataset comprising 55 manually crafted queries was created to serve as a new benchmark for operating a Manufacturing Execution System (MES) through conversation.  
+3) An experimental environment was established using a simulated garment manufacturing system. Furthermore, a new question-and-answer dataset comprising 55 manually crafted queries was created to serve as a new benchmark for operating a Manufacturing Execution System (MES) through conversation.  
 The evaluation of the CWM demonstrates an impressive execution success rate of 80\%, significantly exceeding the original GPT-4's performance, which registers at 60\%.
 
 The subsequent sections are organized as follows:
 Section~\ref{sec:related_work} provides a review of existing literature concerning user interfaces within Manufacturing Execution Systems (MES), as well as the application of Large Language Models (LLM) in manufacturing processes and techniques associated with LLM.
-Section~\ref{sec:method} depicts the technical details of CMS including the Query Rewriter and  Multi-step Dynamical Operations Generation.
+Section~\ref{sec:method} depicts the technical details of CMS including the Query Rewriting and Multi-step Dynamical Operations Generation.
 % The experimental Section~\ref{sec:exp} introduces the testing garment manufacturing system and the Q/A dataset. 
-The experimental Section~\ref{sec:exp} provides an introduction to the simulated garment manufacturing system employed for testing, along with the corresponding Q/A dataset.
+The experiment Section~\ref{sec:exp} provides an introduction to the simulated garment manufacturing system used for testing, along with the corresponding Q/A dataset.
 Next, the experimental results and analysis are presented.
-Section \label{sec:discussion} discusses the limitations of CWM and provides insight into future research. 
-Finally, Section \label{sec:conclusion} concludes this article.
+Section \ref{sec:discussion} discusses the limitations of CWM and provides insight into future research. 
+Finally, Section \ref{sec:conclusion} concludes this article.
 
 
 \section{Related Work}
 \label{sec:related_work}
 \subsection{User interface of MES}
 % Because of the many distinct elements of MES, 
-An integrated management interface is indispensable for each MES to ensure that distinct components are systematically organized and accessible.
-A graphical user interface (GUI) serves to convey information to users and facilitate human decision-making in production management~\cite{SHOJAEINASAB2022503}. 
-In spite of the maturity of GUI development frameworks, limitations persist in MES development due to the substantial labor required for customization and maintenance, coupled with high learning costs and operational complexity for users.
-Low-code ~\cite{cabot2020positioning} and no-code~\cite{rokis2022challenges} development are recent trends that integrate tools for a specific kind of applications and enable end users to create and configure corresponding applications by themselves, such as ERP, MES, and digital twin systems~\cite{DALIBOR2022101117}.
-Although these techniques are known to be easily developed, deployed, and maintained, they nevertheless face limitations in extensibility, rendering them unsuitable for highly customized manufacturing scenarios~\cite{rokis2022challenges}.
+An integrated management interface is indispensable for each MES to ensure that the distinct components are systematically organized and accessible.
+Graphical user interface (GUI) serves to convey information to users and facilitate human decision-making in production management~\cite{SHOJAEINASAB2022503}. 
+This section examines recent research concerning the creation and application of GUI. 
 
-Artificial intelligence (AI) can be incorporated into the interface layer for MES to create better user-friendly experiences. 
+% Advanced software engineering methods are suggested to address challenges in development and implementation. 
+% From the perspective of reducing the labor cost of software development and maintenance,
+% emerging software development techniques have explored paradigms such as no-code~\cite{rokis2022challenges} and low-code~\cite{cabot2020positioning} development platforms.
+% However, these platforms face usability--plasticity dilemma.
+% % High cost of learning new software and frameworks.
+% % The major one is the trade-off between usability and extensibility. 
+% Component encapsulation allows non-programmers to swiftly create a software system through drag-and-drop interfaces.
+% However, excessive encapsulation will adversely affect extensibility, making it impossible to meet customized needs.
+% From a worker's experience standpoint in relation to usage, Robotic Process Automation (RPA)\cite{siderska2020robotic} has garnered substantial interest as a means of automating repetitive and labor-intensive business processes through software bots.
+% However, the functions of most RPA engines are generally limited to specific workflows and certain GUI pages.
+% They merely serve as supplemental tools to the GUI rather than substitutes for addressing the underlying drawbacks of GUI.
+% From the development perspective, manufacturing is a customized scenario, leading the transaction logic and GUI have to be customized for each individual factory.
+In development terms, manufacturing is a tailored scenario, requiring customization of transaction logic and the GUI for each factory.
+To address the significant cost associated with customized development, many software development techniques have explored paradigms such as no-code~\cite{rokis2022challenges} and low-code~\cite{cabot2020positioning} development platforms.
+% In spite of the maturity of GUI development frameworks, limitations persist in MES development due to the substantial labor required for customization and maintenance.
+% , coupled with high learning costs and operational complexity for users.
+% Low-code ~\cite{cabot2020positioning} and no-code~\cite{rokis2022challenges} development are recent trends that
+These platforms integrate tools for a specific kind of applications and enable end developers to create and configure corresponding applications by themselves, such as ERP, MES, and digital twin systems~\cite{DALIBOR2022101117}.
+Although these techniques are known to be easily developed, deployed, and maintained, they nevertheless face limitations in extensibility, rendering them unsuitable for complicated manufacturing scenarios~\cite{rokis2022challenges}.
+
+In the utilization perspective, intricate manufacturing systems are associated with significant learning expenses and operational complexities for users.
+As a revolutionary technique to simplify the operational processes and enhance user experience, Robotic Process Automation (RPA)~\cite{siderska2020robotic} has garnered substantial interest as a means of automating repetitive and labor-intensive business processes through software bots.
+% SmartFlow integrates computer vision and LLMs to automatically generate navigation workflows and adapt to variations in GUIs and applications without human intervention~\cite{jain2024smartflow}.
+% Wang et al.\cite{wang2023enabling} conducted a study exploring the use of pre-trained language models (LLMs) to enable conversational interaction on mobile user interfaces (UIs)
+Recent work by Holzinger et al. ~\cite{holzinger2022personas} highlights the importance of human-centered Artificial intelligence (AI) interfaces.
+Current RPA systems are most designed to adhere to pre-defined rules and workflows of the GUI~\cite{jain2024smartflow}.
+These functionalities are typically implemented through drag-and-drop interfaces, screenplay recording, or automation frameworks such as Selenium~\cite{sharma2014web}.
+The systems are intrinsically system-centered, instead of human-centered.
+Users must passively adhere to the rules and provide specific information, yet they cannot actively express their desires~\cite{jain2024smartflow}.
+Meanwhile, RPA remains dependent on GUI interfaces, the cost of developing GUI is unavoidable.
+Recent years have witnessed remarkable progress in computer vision, LLM, and LLM-Agent, which have opened up new possibilities for integrating LLMs with RPA systems towards enabling them to perceive and autonomously interact with complex applications.
+% The system is fundamentally centered around itself rather than the user. Users must adhere to set regulations and supply precise data, yet they lack the ability to actively convey their desires.
+% , particularly in domains where explainability and causability are crucial. 
+AI can be incorporated into the interface layer for MES to create better user-friendly experiences. 
 Mantravadi et al.~\cite{mantravadi2020user} proposed the concept of AI-based chatbot assistance, which aims at production coordination by assisting the shop floor workforce and providing easy information
 extraction in manufacturing.
 Their developed prototype shows that MES users can benefit from an interactive chatbot by creating more dynamic and free experiences.
@@ -445,12 +509,20 @@ One primary function of MES is managing the production data by accessing the pro
 To address the wide range of potential queries from users, the proposed CWM will act as a database operating agent between the user and the database. 
 Text2SQL parsing~\cite{li2024codes} aims at converting natural language questions into executable SQLs. 
 Recent advances in large language models (LLMs), such as GPT-4 and Claude-2 have shown impressive results in this task. Some production-ready projects are also developed, such as DB-GPT~\cite{xue2023dbgpt} and sqlcoder~\footnote{https://github.com/defog-ai/sqlcoder}.
-However, according to the test results from a large-scale test-to-SQL benchmark, the most effective text-to-SQL models achieve 54.89\% in execution accuracy, whereas human experts achieve approximately 92.96\%~\cite{li2024can}. 
-By designing specific workflows and incorporating additional prior knowledge through prompt engineering, the performance of Text2SQL in practical applications has been improved significantly. 
-As an extension of NL2SQL, ChatBI is proposed to convert Natural Language to Business Intelligence~\cite{lian2024chatbi}, effectively addressing challenges related to limited interaction modes and a large number of columns. 
+However, according to the test results from a large-scale Text2SQL benchmark, the most effective Text2SQL models achieve 54.89\% in execution accuracy, whereas human experts achieve approximately 92.96\%~\cite{li2024can}. 
+
+Intrinsically, Text2SQL is a code generation technology that transforms detailed and precise natural language requests into SQL commands. 
+In practical applications, it must incorporate business-related prior knowledge alongside Text2SQL to accurately identify users' requirements and generate executable SQL commands.
+By designing specific workflows and incorporating additional knowledge through prompt engineering, the performance of Text2SQL in practical applications has been improved significantly. 
+As an extension of Text2SQL, ChatBI is proposed to convert Natural Language to Business Intelligence~\cite{lian2024chatbi}, effectively addressing challenges related to a large number of columns. 
 To address complex queries requiring multi-step database operations rather than a single SQL command, ChatDB~\cite{hu2023chatdb} and Din-SQL~\cite{pourreza2024din} augment LLMs to generate multi-step and dynamical SQL instructions for database manipulation. 
+However, existing LLM-based business intelligence systems are generally applied in non-intrusive data query scenarios to avoid the catastrophic consequences of hallucinatory data editing.
+In our study, manipulating MES inevitably involves a number of update, insert, and delete operations. 
+The chosen operations and their order must be absolutely accurate. 
+This places extremely high requirements on the agent. 
+Not only does the agent need to understand all database's schemas and their relationships, but it also needs to follow the production guidelines.
 % As a fundamental technology, Text2SQL is still distant from enabling conversational interactions with real Manufacturing Execution System (MES) databases. 
-Within the operational framework of a Manufacturing Execution System (MES), addressing user requests entails the complex task of dataset record manipulation, which proves to be significantly more challenging.
+% Within the operational framework of a Manufacturing Execution System (MES), addressing user requests entails the complex task of dataset record manipulation, which proves to be significantly more challenging.
 
 
 
@@ -467,7 +539,13 @@ An LLM agent takes charge of a defined set of tools, each accompanied by a textu
 Given a complex problem, the LLM generates the plan via Chain-of-Thought~\cite{wei2022chain} and sequentially invokes approximate tools with parameters extracted from the context. 
 In manufacturing, most systems provide standardized API and protocols for integrating with other software~\cite {SHOJAEINASAB2022503}. 
 Functioning as a mediator between human operators and the MES, the CWM needs to engage with the MES through these pre-established APIs. 
-The study introduces the LLM-Agent to invoke MES tools and services automatically.
+For integration of the LLM into serious and complicated manufacturing contexts, it is crucial that the agent's inferences and behaviors are transparent, explainable, and controllable~\cite{delser2024counterfactual}.
+
+% Recent advancements in explainable AI (XAI) have shown that LLMs can be used to generate trustworthy counterfactual explanations~\cite{delser2024counterfactual}.
+
+% The study introduces the LLM-Agent to invoke MES tools and services automatically.
+% Recent advancements in explainable AI (XAI) have shown that LLMs can be used to generate trustworthy counterfactual explanations, which are crucial for understanding the decision-making processes of AI systems in high-stakes domains such as manufacturing~\cite{delser2024counterfactual} .
+
 
 \subsection{Application of LLM in Manufacturing systems}
 In the context of Industry 4.0, the rapid emergence of LLM has brought forth transformative solutions for manufacturers in processing and leveraging their data efficiently. 
@@ -549,23 +627,81 @@ If the real name stored in the database is "PolyU", once the user inputs "Hong K
 Therefore, the first technical module of CWM is developed to
 standardize the query for Entity disambiguation.
 
-In CWM, we dynamically maintain the embedding of registered entities from the MES in a vector database.
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figs/query_rewrite.pdf}
+    \caption{Technical details of Request Rewriter}
+    \label{fig:tech_request_rewriter}
+\end{figure}
+
+The technical details of the request rewriter is shown in figure~\ref{fig:tech_request_rewriter}.
+We dynamically maintain the embedding of registered entities from the MES in a vector database.
 We utilize OpenAI's text-embedding-3-large model to convert textual names into vectors. 
 Subsequently, we employ the LLM's zero-shot Named Entity Recognition capability to identify entities from the user's input~\cite{xie2023self} and retrieve the top-K relevant entities by a linguistic embedding module and a retriever.
 Finally, we rewrite the entity information with standardized format, {schema-field="information"} where the schema represents the name of table, the field denotes the field name, and the "information" is the matched entity.
 For example, the "Hong Kong Polytechnic University" will be transformed to \{customer.name="PolyU"\}.
 
 % The matching between input information and registered entities are implemented by an linguistic embedding module and retriever.
-When the set of candidate entities changes, such as when a customer updates their name, it triggers an update to the knowledge base. 
+% When the set of candidate entities changes, such as when a customer updates their name, it triggers an update to the knowledge base. 
+When the set of registered entities is altered, for instance, if a customer modifies their name, it triggers a knowledge base update.
 If the information provided by the user does not match any registered entity, it indicates that the user's query is not recognized, and the CWM will return to generate a question to the user for confirmation.
 
+\begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ Prompt for rewriting request},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+(*@\color{red}{\# role}@*):
+  You are a professional question optimization model. You can replace entity names in questions with standard entity names.
+
+(*@\color{red}{\# Standard Entity Names}@*):
+  The correspondence between entity names and possible standard entity names is as follows
+  '''
+  {standard_entity_mapping}
+  '''
+
+(*@\color{red}{\# Output Requirements}@*):
+  1. Convert entity names to the most probable standard entity names.
+  2. Replace the original entity names with "<entity_type = standard_entity_name>"
+
+(*@\color{red}{\# Output Examples}@*):
+  1. Original Question:
+  Orders of PolyU
+  Rewritten Question:
+  <customers.customer_name = 'PolyU'> orders
+  2. Original Question:
+  What are the sewing tasks that use silk
+  Rewritten Question:
+  What are the sewing tasks that use <products.product_name = 'Silk'>
+  3. Original Question:
+  What does the main warehouse have
+  Rewritten Question:
+  What does <warehouse.warehouse_name = 'Main Warehouse'> have
+  4. Original Question:
+  What tasks does the Advanced Sewers group have
+  Rewritten Question:
+  What tasks does <working_group.name = 'Advanced Sewers'> have
+  5. Original Question:
+  What tasks does the Advanced Cutters group have
+  Rewritten Question:
+  What tasks does <working_group.name = 'Advanced Cutters'> have
+
+  {question}
+
+(*@\color{red}{\# Rewritten Question}@*):
+\end{lstlisting}
+
 % Entity disambiguation by LLM
-\subsection{Multi-step Dynamical Operations Generation.}
+\subsection{Multi-step Dynamical Operations Generation}
 % The foundation of CWM is transforming user's natural language queries into a series of basic operations.
 In an MES, a request, such as assigning a task to a worker or placing an order for a customer, typically involves a series of complex operations.
 To increase the controllability and reliability of CWM in handling complicated requests, this paper introduces \textbf{Multi-step Dynamical Operations Generation} to transform the natural language input from users to a series of executable basic operations in MES.
 A basic operation is either a request for invoking a tool, or executing a SQL command for operating the database, or a thinking step.
-This section will describe the details involved in generating and executing these operations.
+% This section will describe the details involved in generating and executing these operations.
+The technical details of Multi-step Dynamical Operations Generation is shown in Figure \ref{fig:tech_multi_step}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{figs/multi_step.pdf}
+    \caption{Technical details of Multi-step Dynamical Operations Generation}
+    \label{fig:tech_multi_step}
+\end{figure}
 
 \subsubsection{Operations}
 % \subsubsectionfont{SQL}
@@ -594,9 +730,23 @@ Based on this, the 'Thought' step will generate a local CoT and infer the final 
 An example will be shown in the section \ref{sec:exp_cases}.
 
 % The foundation of CWM is transforming user's natural language queries to a series of SQL commands for operating the database.
+
+\begin{lstlisting}[style=prompt, label={lst:system},caption={System prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+You are now the following python function: 
+# "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
+"If you are unable to identify the parameters within the <> using the given information."
+"If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
+"please output a list of tool operations with distinct parameters."
+        
+def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
+Only respond with your `return` value. Do not include any other explanatory text in your response.",
+        },
+\end{lstlisting}
 \subsubsection{Few-shot learning}
-In addition to the textual data schema and the description of available tools, we also incorporate few-short learning by providing representative examples as system prompts.
-These include the chain of operations, the correct tools to invoke, and the SQL commands required to resolve the request.
+In addition to the data schema and the description of available tools, CWM needs to understand the production guidelines, such as the order of accessing databases, the format of the data inserted into the table and some definitions and abbreviations in the garment industry.
+Because each garment factory has customized guidelines and the knowledge base needs to be maintained dynamically, 
+this study employs the training-free few-shot learning~\cite{hu2023chatdb} to inject the specific knowledge in the model. It is achieved by providing some representative examples as system prompts.
+Each example includes the chain of operations, the correct tools to invoke, and the SQL commands required to resolve the request.
 % Table illustrates an example of assigning a task to workers.
 We introduce three few-shorting learning examples in total for covering the primary difficult and representative cases of the garment MES, 1) placing orders, 2) analyzing task completion progress, and 3) retrieving product details of an order.
 % It should be noted that the introduced examples are only a small represen subset of all possible transactions, instead of an enumeration of all cases.
@@ -606,11 +756,11 @@ A deep understanding of the database structure is crucial for CWM to generalize 
 % The CWM is a to be generalized to other transactions which involve the operations on the same schemas.
 
 \subsubsection{Prompts Design}
-Based on the prompt template from ChatDB~\cite{hu2023chatdb}, we design the prompt for achieving Multi-step Dynamical Operations Generation, including the system prompt and the user prompt.
-As shown in the prompt \ref{lst:system}, the system prompt establishes the context and objectives for the LLM. 
-It also provides details on the database schema and available tools, omitting some redundant information, which is marked in red font.
-As demonstrated in prompt~\ref{lst:user_prompt}, the user prompt contains the original user query and specifies the output formats.
-Additionally, few-shot examples are also appended to the user prompt.
+Based on the prompt template from ChatDB~\cite{hu2023chatdb}, we design the prompt for achieving Multi-step Dynamical Operations Generation.
+As shown in the prompt \ref{lst:user_prompt}, it establishes the context and objectives for the LLM, including the details on the database schema and available tools, omitting some redundant information, which is marked in red font.
+% As demonstrated in prompt~\ref{lst:user_prompt}, the user prompt contains the original user query and specifies the output formats.
+Next, the prompt contains the instructions to the LLM and specifies the output formats.
+Additionally, few-shot examples are also included.
 The content following USER INPUT represents the output from the query rewriter module.
 
 \subsubsection{Operation execution and dynamical parameters retrieval}
@@ -641,7 +791,8 @@ The structured records will be automatically organized as tables with the markdo
 %  showstringspaces=false,                              % 不显示字符串中的空格
 %  language=text,                                        % 设置语言
 % }
-\begin{lstlisting}[style=prompt, label={lst:system},caption={System prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+
+\begin{lstlisting}[style=prompt, label={lst:user_prompt},caption={User prompt for generating the planned multi-step Operations},aboveskip=0pt, belowskip=0pt]
 You are Chat With MES, a powerful AI assistant, a variant of ChatGPT that can 
 1) decide to invoke some provided tools to solve the query. 
 2) utilize the database of the Manufacturing Execution System as external symbolic memory. 
@@ -668,9 +819,7 @@ CREATE TABLE `customers` (
 );
 
 % Other table creation scripts.
-\end{lstlisting}
 
-\begin{lstlisting}[style=prompt, label={lst:user_prompt},caption={User prompt for generating the planned multi-step Operations},aboveskip=0pt, belowskip=0pt]
 Please tell me what basic operations, including sql, tool,and thought, should I use in order to respond to the "USER INPUT". If it needs multiple operations, please list them step by step concisely, and indicate whether the operation involves calling a tool or  accessing a database via SQL. If there is no need to use any operations, reply to the "USER INPUT" directly.
 At all times, you should prioritize using the provided tool. If the tool does not meet the requirements, only then may you resort to using SQL.
 The output should be a markdown code snippet formatted in the following schema, including the leading and trailing "\`\`\`" and "\`\`\`":
@@ -723,6 +872,9 @@ The experiment results demonstrate that CWM performs a high execution accuracy, 
 Multi-step operations generation significantly contributes to a high execution success rate.
 % ChatDB significantly outperforms the baseline model ChatGPT, highlighting the advantages of symbolic memory integration.
 \subsection{Experimental Setup}
+
+% \subsubsection{Settings of CWM}
+% % 
 
 \subsubsection{Simulated MES}
 % To adapt to the use case of CWM and enable quantitative comparisons with other baselines, 
@@ -890,166 +1042,348 @@ The CWM demonstrates a strong understanding of the internal relationships betwee
   \caption{The distribution of request from the perspective of the operation types, identity, and complexity. The complexity is represented by the number of tables that need to be accessed to handle this question.}
 \end{figure*}
 
-\begin{center}
-\begin{longtable}{p{390pt}}
-\caption{Example of creating an order}
-    \label{tab:case_place_order}\\
-    % \centering
-    % \begin{tabular}{p{390pt}}
-    \toprule
-      \textbf{Question:}     \\
-       % \makecell[l]{I am from The Hong Kong Polytechnic University. Today is July 2, 2024. Please \\ help me create an order for 50 red T-shirts in size M and 30 blue sweaters in size XL.} \\
-       Please create an order for the customer "Hong Kong Polytechnic University," which includes 50 red T-shirts in size M and 30 blue sweaters in size XL. Once the order is created, please proceed to allocate tasks.
-\\
-          \hline
-          \textbf{Solution:}\\
-          \textbf{Query Rewriting:}
-           Please create an order for the customer <customers.customer\_name = 'PolyU'>, which includes 50 <products.attributes = 'Red'> <products\_types.description = 'T-shirt'> in <products.attributes = 'M size'> and 30 <products.attributes = 'Blue'> <products\_types.description = 'Sweater'> in <products.attributes = 'XL size'>. Once the order is created, please proceed to allocate tasks.\\
-          \hline
-\textbf{Chain of Operations:}\\
+% \begin{center}
+% \begin{longtable}{p{390pt}}
+% \caption{Example of creating an order}
+%     \label{tab:case_place_order}\\
+%     % \centering
+%     % \begin{tabular}{p{390pt}}
+%     \toprule
+%       \textbf{Question:}     \\
+%        % \makecell[l]{I am from The Hong Kong Polytechnic University. Today is July 2, 2024. Please \\ help me create an order for 50 red T-shirts in size M and 30 blue sweaters in size XL.} \\
+%        Please create an order for the customer "Hong Kong Polytechnic University," which includes 50 red T-shirts in size M and 30 blue sweaters in size XL. Once the order is created, please proceed to allocate tasks.
+% \\
+%           \hline
+%           \textbf{Solution:}\\
+%           \textbf{Query Rewriting:}
+%            Please create an order for the customer <customers.customer\_name = 'PolyU'>, which includes 50 <products.attributes = 'Red'> <products\_types.description = 'T-shirt'> in <products.attributes = 'M size'> and 30 <products.attributes = 'Blue'> <products\_types.description = 'Sweater'> in <products.attributes = 'XL size'>. Once the order is created, please proceed to allocate tasks.\\
+%           \hline
+% \textbf{Chain of Operations:}\\
 
-\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
-Step1: Retrieve the customer ID for the customer with the name "PolyU"
-SQL `SELECT id FROM customers WHERE customer_name = 'PolyU';`
+% \begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
+% Step1: Retrieve the customer ID for the customer with the name "PolyU"
+% SQL `SELECT id FROM customers WHERE customer_name = 'PolyU';`
 
-Step2: Retrieve the product ID for the product with attributes "Red, M size" and type "T-shirt"
-SQL `SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Red, M size' AND pt.description = 'T-shirt';`
+% Step2: Retrieve the product ID for the product with attributes "Red, M size" and type "T-shirt"
+% SQL `SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Red, M size' AND pt.description = 'T-shirt';`
 
-Step3: Retrieve the product ID for the product with attributes "Blue, XL size" and type "Sweater"
-SQL `SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Blue, XL size' AND pt.description = 'Sweater';`
+% Step3: Retrieve the product ID for the product with attributes "Blue, XL size" and type "Sweater"
+% SQL `SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Blue, XL size' AND pt.description = 'Sweater';`
 
-Step4: Create a new order with the default order name "Order20240702120000" for the customer "PolyU"
-SQL `INSERT INTO orders (user_id, order_name, created_at) VALUES ('<customer_id>', 'Order20240702120000', '2024-07-02 12:00:00');`
+% Step4: Create a new order with the default order name "Order20240702120000" for the customer "PolyU"
+% SQL `INSERT INTO orders (user_id, order_name, created_at) VALUES ('<customer_id>', 'Order20240702120000', '2024-07-02 12:00:00');`
 
-Step5: Retrieve the order ID for the newly created order
-SQL `SELECT id FROM orders WHERE order_name = 'Order20240702120000';`
+% Step5: Retrieve the order ID for the newly created order
+% SQL `SELECT id FROM orders WHERE order_name = 'Order20240702120000';`
 
-Step6: Insert 50 units of the product "Red, M size T-shirt" into the order
-SQL `INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_m_tshirt_product_id>', 50);`
+% Step6: Insert 50 units of the product "Red, M size T-shirt" into the order
+% SQL `INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_m_tshirt_product_id>', 50);`
 
-Step7: Insert 30 units of the product "Blue, XL size Sweater" into the order
-SQL `INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<blue_xl_sweater_product_id>', 30);`
+% Step7: Insert 30 units of the product "Blue, XL size Sweater" into the order
+% SQL `INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<blue_xl_sweater_product_id>', 30);`
 
-Step8: Allocate the cutting and sewing tasks for the newly created order
-Tool `tool_allocate_task_order, {'order_id': <order_id>, 'order_name': 'Order20240702120000'}, Allocate the cutting and sewing tasks for the order`
-\end{lstlisting}\\ \hline
+% Step8: Allocate the cutting and sewing tasks for the newly created order
+% Tool `tool_allocate_task_order, {'order_id': <order_id>, 'order_name': 'Order20240702120000'}, Allocate the cutting and sewing tasks for the order`
+% \end{lstlisting}\\ \hline
           
-\textbf{Step 1:} SQL, Retrieve the customer ID for the customer with the name "PolyU"\\
-Execute:\\
-\lstinline!SELECT id FROM customers WHERE customer_name = 'PolyU';! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+----+
-| id |
-+----+
-| 1  |
-+----+
-\end{lstlisting}\\ \hline
-\textbf{Step 2:} SQL, Retrieve the product ID for the product with attributes "Red, M size" and type "T-shirt".\\
-Execute:\\
-\lstinline!SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Red, M size' AND pt.description = 'T-shirt';! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+----+
-| id |
-+----+
-| 1  |
-+----+
-\end{lstlisting}\\ \hline
-\textbf{Step 3:} SQL, Retrieve the product ID for the product with attributes "Blue, XL size" and type "Sweater"\\
-Execute:\\
-\lstinline!SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Blue, XL size' AND pt.description = 'Sweater';! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+----+
-| id |
-+----+
-| 17 |
-+----+
-\end{lstlisting}\\ \hline
-\textbf{Step 4:} SQL, Create a new order for the customer "PolyU" with the current date and time as the order name.\\
-Execute:\\
-\lstinline!INSERT INTO orders (user_id, order_name, created_at) VALUES ('1', CONCAT('Order', DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')), NOW());! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+-------------------+
-| auto_increment_id |
-+-------------------+
-|         14        |
-+-------------------+
-\end{lstlisting}\\ \hline
-% \textbf{Step 5:} SQL, Retrieve the order ID for the newly created order.\\
+% \textbf{Step 1:} SQL, Retrieve the customer ID for the customer with the name "PolyU"\\
 % Execute:\\
-% \lstinline!SELECT id FROM orders WHERE user_id = '1' ORDER BY created_at DESC LIMIT 1;! \\
+% \lstinline!SELECT id FROM customers WHERE customer_name = 'PolyU';! \\
 % \begin{lstlisting}
 % Results from executing the SQL:
 % +----+
 % | id |
 % +----+
-% | 14 |
+% | 1  |
 % +----+
 % \end{lstlisting}\\ \hline
-\textbf{Step 5:} SQL, Insert 50 units of the product "Red, M size T-shirt" into the order\\
-Execute:\\
-\lstinline!INSERT INTO order_product (order_id, product_id, number) VALUES ('14', '1', 50);! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+-------------------+
-| auto_increment_id |
-+-------------------+
-|         39        |
-+-------------------+
-\end{lstlisting}\\ \hline
-\textbf{Step 6:} SQL, Insert 30 units of the product "Blue, XL size Sweater" into the order\\
-Execute:\\
-\lstinline!INSERT INTO order_product (order_id, product_id, number) VALUES ('14', '17', 30);! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+-------------------+
-| auto_increment_id |
-+-------------------+
-|         40        |
-+-------------------+
-\end{lstlisting}\\ \hline
-\textbf{Step 7:} Tool, Allocate the cutting and sewing tasks for the newly created order\\
-Execute:\\
-\lstinline! Tool: tool_allocate_task_order, Parameters: {'order_id': 14}!\\
-\begin{lstlisting}
-Results from invoking the tools:
-Product ID 43 (T-shirt)
-Sewing Task:
+% \textbf{Step 2:} SQL, Retrieve the product ID for the product with attributes "Red, M size" and type "T-shirt".\\
+% Execute:\\
+% \lstinline!SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Red, M size' AND pt.description = 'T-shirt';! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% +----+
+% | id |
+% +----+
+% | 1  |
+% +----+
+% \end{lstlisting}\\ \hline
+% \textbf{Step 3:} SQL, Retrieve the product ID for the product with attributes "Blue, XL size" and type "Sweater"\\
+% Execute:\\
+% \lstinline!SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Blue, XL size' AND pt.description = 'Sweater';! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% +----+
+% | id |
+% +----+
+% | 17 |
+% +----+
+% \end{lstlisting}\\ \hline
+% \textbf{Step 4:} SQL, Create a new order for the customer "PolyU" with the current date and time as the order name.\\
+% Execute:\\
+% \lstinline!INSERT INTO orders (user_id, order_name, created_at) VALUES ('1', CONCAT('Order', DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')), NOW());! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% +-------------------+
+% | auto_increment_id |
+% +-------------------+
+% |         14        |
+% +-------------------+
+% \end{lstlisting}\\ \hline
+% % \textbf{Step 5:} SQL, Retrieve the order ID for the newly created order.\\
+% % Execute:\\
+% % \lstinline!SELECT id FROM orders WHERE user_id = '1' ORDER BY created_at DESC LIMIT 1;! \\
+% % \begin{lstlisting}
+% % Results from executing the SQL:
+% % +----+
+% % | id |
+% % +----+
+% % | 14 |
+% % +----+
+% % \end{lstlisting}\\ \hline
+% \textbf{Step 5:} SQL, Insert 50 units of the product "Red, M size T-shirt" into the order\\
+% Execute:\\
+% \lstinline!INSERT INTO order_product (order_id, product_id, number) VALUES ('14', '1', 50);! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% +-------------------+
+% | auto_increment_id |
+% +-------------------+
+% |         39        |
+% +-------------------+
+% \end{lstlisting}\\ \hline
+% \textbf{Step 6:} SQL, Insert 30 units of the product "Blue, XL size Sweater" into the order\\
+% Execute:\\
+% \lstinline!INSERT INTO order_product (order_id, product_id, number) VALUES ('14', '17', 30);! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% +-------------------+
+% | auto_increment_id |
+% +-------------------+
+% |         40        |
+% +-------------------+
+% \end{lstlisting}\\ \hline
+% \textbf{Step 7:} Tool, Allocate the cutting and sewing tasks for the newly created order\\
+% Execute:\\
+% \lstinline! Tool: tool_allocate_task_order, Parameters: {'order_id': 14}!\\
+% \begin{lstlisting}
+% Results from invoking the tools:
+% Product ID 43 (T-shirt)
+% Sewing Task:
 
-Task ID: 96
-Working Group: Premier Sewers
-Planned Number: 50
-Status: Not started
-Materials Allocated:
-100 units of Material ID 10
-200 units of Material ID 2
+% Task ID: 96
+% Working Group: Premier Sewers
+% Planned Number: 50
+% Status: Not started
+% Materials Allocated:
+% 100 units of Material ID 10
+% 200 units of Material ID 2
 
-Product ID 44 (Sweater)
-Sewing Task:
+% Product ID 44 (Sweater)
+% Sewing Task:
 
-Task ID: 97
-Working Group: Elite Sewers
-Planned Number: 30
-Status: Not started
-Materials Allocated:
-60 units of Material ID 4
-90 units of Material ID 12
-\end{lstlisting}\\ 
+% Task ID: 97
+% Working Group: Elite Sewers
+% Planned Number: 30
+% Status: Not started
+% Materials Allocated:
+% 60 units of Material ID 4
+% 90 units of Material ID 12
+% \end{lstlisting}\\ 
+% % \hline
+% % \begin{itemize}[noitemsep,topsep=0pt]
+% % \item Order ID: dc111615-3e00-11ef-b3df-0242c0a82002
+% % \item Order Name: Order for PolyU on 2024-07-03
+% % \item Product ID: p1 (50 pieces of red T-shirt), p17 (30 pieces of blue XL sweater)
+% % \item Product Quantity: 50 (red T-shirt), 30 (blue XL sweater)
+% % \end{itemize}
+% % The order has been successfully created as requested, including 50 pieces of red T-shirt and 30 pieces of blue XL sweater. You can retrieve the order information based on the order name and verify the successful creation of the order. If you have any other questions or need further assistance, please feel free to let me know! \\ 
 % \hline
-% \begin{itemize}[noitemsep,topsep=0pt]
-% \item Order ID: dc111615-3e00-11ef-b3df-0242c0a82002
-% \item Order Name: Order for PolyU on 2024-07-03
-% \item Product ID: p1 (50 pieces of red T-shirt), p17 (30 pieces of blue XL sweater)
-% \item Product Quantity: 50 (red T-shirt), 30 (blue XL sweater)
-% \end{itemize}
-% The order has been successfully created as requested, including 50 pieces of red T-shirt and 30 pieces of blue XL sweater. You can retrieve the order information based on the order name and verify the successful creation of the order. If you have any other questions or need further assistance, please feel free to let me know! \\ 
-\hline
+% \end{longtable}
+% \end{center}
+
+
+% \begin{center}
+% \begin{longtable}{p{390pt}}
+% \caption{Example of creating an order(without rewriter)}
+%     \label{tab:case_place_order_without_rewriter}\\
+%     % \centering
+%     % \begin{tabular}{p{390pt}}
+%     \toprule
+%       \textbf{Question:}     \\
+%        % \makecell[l]{I am from The Hong Kong Polytechnic University. Today is July 2, 2024. Please \\ help me create an order for 50 red T-shirts in size M and 30 blue sweaters in size XL.} \\
+%        Please create an order for the customer "Hong Kong Polytechnic University," which includes 50 red T-shirts in size M and 30 blue sweaters in size XL. Once the order is created, please proceed to allocate tasks.
+% \\
+%           \hline
+%           \textbf{Solution:}\\
+% \textbf{Chain of Operations:}\\
+
+% \begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
+% Step1: Retrieve the customer ID for the customer with the name "Hong Kong Polytechnic University"
+% SQL `SELECT id FROM customers WHERE customer_name = 'The Hong Kong Polytechnic University';`
+
+% Step2: Retrieve the product ID for the product with attributes "Red, M size" and type "T-shirt"
+% SQL `SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Red, M size' AND pt.description = 'T-shirt';`
+
+% Step3: Retrieve the product ID for the product with attributes "Blue, XL size" and type "Sweater"
+% SQL `SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Blue, XL size' AND pt.description = 'Sweater';`
+
+% Step4: Create a new order with the default order name "Order20240702120000" for the customer "Hong Kong Polytechnic University"
+% SQL `INSERT INTO orders (user_id, order_name, created_at) VALUES ('<customer_id>', 'Order20240702120000', '2024-07-02 12:00:00');`
+
+% Step5: Retrieve the order ID for the newly created order
+% SQL `SELECT id FROM orders WHERE order_name = 'Order20240702120000';`
+
+% Step6: Insert 50 units of the product "Red, M size T-shirt" into the order
+% SQL `INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_m_tshirt_product_id>', 50);`
+
+% Step7: Insert 30 units of the product "Blue, XL size Sweater" into the order
+% SQL `INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<blue_xl_sweater_product_id>', 30);`
+% \end{lstlisting}\\ \hline
+          
+% \textbf{Step 1:} SQL, Retrieve the customer ID for the customer with the name "Hong Kong Polytechnic University"\\
+% Execute:\\
+% \lstinline!SELECT id FROM customers WHERE customer_name = 'Hong Kong Polytechnic University';! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% no results found.
+% \end{lstlisting}\\ \hline
+% \textbf{Step 2:} SQL, Retrieve the product ID for the product with attributes "Red, M size" and type "T-shirt".\\
+% Execute:\\
+% \lstinline!SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Red, M size' AND pt.description = 'T-shirt';! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% +----+
+% | id |
+% +----+
+% | 1  |
+% +----+
+% \end{lstlisting}\\ \hline
+% \textbf{Step 3:} SQL, Retrieve the product ID for the product with attributes "Blue, XL size" and type "Sweater"\\
+% Execute:\\
+% \lstinline!SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Blue, XL size' AND pt.description = 'Sweater';! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% +----+
+% | id |
+% +----+
+% | 17 |
+% +----+
+% \end{lstlisting}\\ \hline
+% \textbf{Step 4:} SQL, Create a new order for the customer "Hong Kong Polytechnic University" with the current date and time as the order name.\\
+% Execute:\\
+% \lstinline!INSERT INTO orders (user_id, order_name, created_at) VALUES ('<customer_id>', CONCAT('Order', DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')), NOW());! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% (1366,Incorrect integer value: '<customer_id>' for column 'user_id' at row 1)
+% \end{lstlisting}\\ \hline
+% \textbf{Step 5:} SQL, Retrieve the order ID for the newly created order\\
+% Execute:\\
+% \lstinline!SELECT id FROM orders WHERE order_name = 'Order20240702120000';! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% no results found.
+% \end{lstlisting}\\ \hline
+% \textbf{Step 6:} SQL, Insert 50 units of the product "Red, M size T-shirt" into the order\\
+% Execute:\\
+% \lstinline!INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '1', 50);! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% (1366, Incorrect integer value: '<order_id>' for column 'order_id' at row 1)
+% \end{lstlisting}\\ \hline
+% \textbf{Step 7:} SQL, Insert 30 units of the product "Blue, XL size Sweater" into the order\\
+% Execute:\\
+% \lstinline!INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '17', 30);! \\
+% \begin{lstlisting}
+% Results from executing the SQL:
+% (1366, Incorrect integer value: '<order_id>' for column 'order_id' at row 1)
+% \end{lstlisting}\\ 
+% \hline
+% \end{longtable}
+% \end{center}
+
+
+\begin{center}
+\begin{longtable}{p{390pt}}
+\caption{Example of reorganize production plan}
+    \label{tab:case_reorganize_production_plan}\\
+    \toprule
+      \textbf{Question:} \\
+       The Emily\_Dress order requires delivery by April 5, 2024. Please re-arrange the production plan and assign tasks to the task group with the fewest tasks currently. Provide a new production plan.\\
+          \hline
+          \textbf{Query Rewriting: }
+          The <orders.order\_name = 'Emily\_Dress'> order requires delivery by April 5, 2024. Please re-arrange the production plan and assign tasks to the task group with the fewest tasks currently. Provide a new production plan.\\
+ \hline
+\textbf{Chain of Operations:}\\
+
+\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
+Step 1: Retrieve the order ID for the order with the name "Emily_Dress"
+SQL `SELECT id FROM orders WHERE order_name = 'Emily_Dress';`
+
+Step2: Retrieve the product details related to the order\n["tool_find_order_details, {'order_id': 3}, Find the product details of an order"]
+Tool `tool_find_order_details, {'order_id': 3}, Find the product details of an order`
+
+Step3: Retrieve the current cutting task's working group ID for the order
+SQL `SELECT working_group_id FROM cutting_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
+
+Step4: Retrieve the current sewing task's working group ID for the order
+SQL `SELECT working_group_id FROM sewing_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
+
+Step5: Get the current list of all working groups and their task counts\ntool_get_busy_workers, {}, Get the current list of all working groups and their task counts
+Tool `tool_get_busy_workers, {}, Get the current list of all working groups and their task counts`
+
+Step6: Compare the task counts of all cutting groups obtained in Step5 and identify the group with the fewest tasks.
+Thought `Compare the task counts of all cutting groups obtained in Step5 and identify the group with the fewest tasks.`
+
+Step7: Compare the task counts of all sewing groups obtained in Step5 and identify the group with the fewest tasks.
+Thought `Compare the task counts of all sewing groups obtained in Step5 and identify the group with the fewest tasks.`
+
+Step8: Retrieve the produced WIP ID from the cutting tasks
+SQL `SELECT produced_wip_id FROM cutting_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
+
+Step9: Update the status of the original cutting tasks to 0 (stopped)
+SQL `UPDATE cutting_tasks SET status = 0 WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
+
+\end{lstlisting}\\
+\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
+
+Step10: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 21, 8, 140, 1);`
+
+Step11: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 29, 10, 150, 1);`
+
+Step12: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 13, 12, 130, 1);`
+
+Step13: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 5, 6, 120, 1);`
+
+Step14: Update the status of the original sewing tasks to 0 (stopped)
+SQL `UPDATE sewing_tasks SET status = 0 WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
+
+Step15: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 21, 140, 1);`
+
+Step16: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 29, 150, 1);`
+
+Step17: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 13, 130, 1);`
+
+Step18: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 5, 120, 1);`
+
+\end{lstlisting}\\ 
+\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
+Step19: Check material inventory for required materials
+SQL `SELECT pm.material_id, pm.number, wm.left_number FROM product_material pm JOIN warehouse_material wm ON pm.material_id = wm.material_id WHERE pm.product_id IN (SELECT product_id FROM order_product WHERE order_id = 3);`
+
+Step20: Compile the new cutting and sewing group information, new task schedule, material inventory status, and expected completion date into a report.
+Thought `Compile the new cutting and sewing group information, new task schedule, material inventory status, and expected completion date into a report.`
+\end{lstlisting}\\ \hline
 \end{longtable}
 \end{center}
-
 
 
 \begin{center}
@@ -1197,6 +1531,37 @@ To compile the calculated quantities from Step 5 into a dictionary format, we wi
 \end{lstlisting}\\ \hline
 % \textbf{Responses:}\\
 % \hline
+\end{longtable}
+\end{center}
+
+\begin{center}
+\begin{longtable}{p{390pt}}
+\caption{Example of querying the material usage(without Multi-step Dynamical Operations Generation)}
+    \label{tab:case_query_material_without_muti_step}\\
+    \toprule
+      \textbf{Question:}     \\
+       % \makecell[l]{I am from The Hong Kong Polytechnic University. Today is July 2, 2024. Please \\ help me create an order for 50 red T-shirts in size M and 30 blue sweaters in size XL.} \\
+       List the raw materials and quantities used for orders in June 2024? And organize it into the form of {raw materials: used quantity}.\\
+          \hline
+          % \textbf{Solution:}\\
+          \textbf{Query Rewriting: }
+          List the raw materials and quantities used for orders in June 2024? And organize it into the form of \{raw materials: used quantity\}.\\
+ \hline
+
+\hline
+\textbf{Execution:}\\
+SQL, To list the raw materials and quantities used for orders in June 2024, we need to find the orders created in June 2024, then join with order\_product to get the products, and finally join with product\_material to get the raw materials and their quantities.\\
+Execute:\\
+\lstinline!SELECT m.name AS raw_material, SUM(pm.number * @op.number@) AS used_quantity FROM orders o @JOIN order_product @ op ON o.id = op.order_id JOIN product_material pm ON op.product_id = pm.product_id JOIN materials m ON pm.material_id = m.id WHERE o.created_at BETWEEN '2024-06-01' AND '2024-06-30' AND @m.type = 'origin' @ GROUP BY m.name;! \\
+% 目前发现这个SQL里有四个问题
+% 第一个是JOIN product_material这里，根据多步操作里的逻辑，应该使用 wip_material 表来获取原材料的用量信息
+% 第二个是op.number那里，材料用量是通过 cutting_tasks.completed_number 和 wip_material.number 计算得出的，op.number这玩意算的不知道是什么
+% 第三个是m.type = 'origin'那里，多步生成里没这个条件，这里应该是大模型理解错误导致的
+% 第四个是缺失了cutting_tasks 表的连接，cutting_tasks连接了订单产品和 WIP 材料，并提供了 completed_number，这是计算材料用量的重要依据
+\begin{lstlisting}[style=sql_command]
+Results from executing the SQL:
+no results found.
+\end{lstlisting}\\ \hline
 \end{longtable}
 \end{center}
 
@@ -1551,9 +1916,10 @@ The CWM is expected to evolve into a more extensible and dynamic framework that 
 A typical MES requires a confirmation step before performing any data adjustment operations.
 The operator who confirms the operation is responsible for any unforeseen consequences that may arise.
 However, the CWM is a virtual worker who autonomously handles task planning and execution.
-A critical issue in this process is determining the responsibility when the LLM performs incorrect operations, even if the user provided correct instructions.
-A viable solution is to incorporate a confirmation function in the chat window, where all details of the data adjustment operations are clearly and thoroughly presented. 
-If the user responds with "YES," they should assume responsibility for any potential consequences.
+A critical issue in this process is determining the responsibility when the LLM performs unreasonable operations, even if the user provided correct instructions.
+A viable solution is to incorporate a confirmation function in the chat window, where all details of the operations are clearly and thoroughly presented. 
+Furthermore, it is meaningful to introduce counterfactual inference~\cite{del2024generating} to forecast the possible outcome under the hypothetical input requests.
+Upon the user's affirmative "YES" during the confirmation phase, responsibility for the action and any outcomes is assumed by the user.
 
 \textbf{Speaks little but is willing to express a lot.}
 % A significant issue appears in our beta testing.
@@ -1562,7 +1928,12 @@ In the traditional MES user interface, users must provide complete information i
 In CWM, the free interaction mode can lead users to become lax and inattentive in providing sufficient information.
 The chatting agent has to keep inquiring about more information to complete the specified request.
 If we strictly limit the question options and required fields in CWM, the characteristic of free chatting is lost, and CWM will degenerate into a typical MES interaction model.
-How to apply the free dialogue to serious scenarios, such as manufacturing, is an important research topic for the broader application of LLMs.
+This dilemma inspires us to consider an important question, what is the best chatting interface for the CWM that is universally applicable, human-centered, and suitable for manufacturing environments?
+% This quandary prompts us to consider a pivotal inquiry: what constitutes the optimal chat interface for the CWM that is universally applicable, human-centered, and tailored for industrial environments? As
+In this initial investigation, the study utilizes Dify's basic chat page as the interface.
+However, there are many stakeholders for the CWM, including customers, production manager and workers.
+The design of human-AI interfaces must take into their tasks, identities, and personas~\cite{holzinger2022personas}.
+Designing next-generation human-AI interfaces for critical applications like manufacturing is crucial for the broader utilization of LLMs.
 % subject that requires long-term exploration.
 
 
