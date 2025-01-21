@@ -1,7 +1,7 @@
 
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /dir/2024-12-04.tex   Wed Jan 22 00:48:15 2025
-%DIF ADD /dir/new.tex          Wed Jan 22 00:48:15 2025
+%DIF DEL /dir/2024-12-04.tex   Wed Jan 22 00:52:08 2025
+%DIF ADD /dir/new.tex          Wed Jan 22 00:52:08 2025
 %% 
 %% Copyright 2007-2024 Elsevier Ltd
 %% 
@@ -962,29 +962,8 @@ Tool `tool_find_order_details, {'order_id': <order_id>}, Find the product detail
 (*@\color{blue}{ANSWER}@*): 
 \end{lstlisting}
 
-\DIFdelbegin %DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
-%DIFDELCMD < %%%
-%DIFAUXCMD NEXT
-\DIFmodbegin
-\begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
-%DIF < You are now the following python function: 
-%DIF < # "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
-%DIF < "If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
-%DIF < "please output a list of tool operations with distinct parameters."
-%DIF <         -
-%DIF < def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
-%DIF < Only respond with your `return` value. Do not include any other explanatory text in your response.",
-%DIF < -
-%DIF < (*@\color{blue}{\# Operation}@*)
-%DIF < INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_tshirt_product_id>', 50)
-%DIF < -
-%DIF < (*@\color{red}{\# Historical Context}@*)
-\end{lstlisting}
-\DIFmodend %DIFAUXCMD
-%DIFDELCMD < \end{lstlisting}
-%DIFDELCMD < %%%
 %DIF <  The foundation of CWM is transforming user's natural language queries to a series of SQL commands for operating the database.
-\DIFdelend \subsubsection{\DIFdelbegin \DIFdel{Few-shot learning}\DIFdelend \DIFaddbegin \DIFadd{Pre-planning operations}\DIFaddend }
+\subsubsection{\DIFdelbegin \DIFdel{Few-shot learning}\DIFdelend \DIFaddbegin \DIFadd{Pre-planning operations}\DIFaddend }
 %DIF >  In Dynamic Multi-step Operations Planning, the CWM will strategize operations prior to execution, based
 \DIFaddbegin \DIFadd{In Multi-step Dynamical Operations Planning and Execution, the CWM will pre-plan the operations prior to execution, 
 Based on the prompt template from ChatDB~\mbox{%DIFAUXCMD
@@ -1013,8 +992,23 @@ We introduce three \DIFdelbegin \DIFdel{few-shorting }\DIFdelend \DIFaddbegin \D
 \DIFdelbegin \DIFdel{The purpose of few-shot learning is to enhance the LLM's understanding of the operational logic of the MES and the relationships among schemas.
 A deep understanding of the database structure is crucial for CWM to generalize effectively in handling arbitrary user inquiries.
 }\DIFdelend % The CWM is a to be generalized to other transactions which involve the operations on the same schemas.
+\DIFaddbegin 
 
 
+\DIFaddend \begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+You are now the following python function: 
+# "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
+"If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
+"please output a list of tool operations with distinct parameters."
+        
+def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
+Only respond with your `return` value. Do not include any other explanatory text in your response.",
+
+(*@\color{blue}{\# Operation}@*)
+INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_tshirt_product_id>', 50)
+
+(*@\color{red}{\# Historical Context}@*)
+\end{lstlisting}
 \DIFdelbegin \subsubsection{\DIFdel{Prompts Design}}
 %DIFAUXCMD
 \addtocounter{subsubsection}{-1}%DIFAUXCMD
@@ -1026,23 +1020,7 @@ It also provides details on the database schema and available tools, omitting so
 As demonstrated in prompt~\ref{lst:user_prompt}, the user prompt contains the original user query and specifies the output formats.
 Additionally, few-shot examples are also appended to the user prompt.
 The content following USER INPUT represents the output from the query rewriter module.
-}\DIFdelend \DIFaddbegin \DIFmodbegin
-\begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
-%DIF > You are now the following python function: 
-%DIF > # "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
-%DIF > "If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
-%DIF > "please output a list of tool operations with distinct parameters."
-%DIF >         
-%DIF > def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
-%DIF > Only respond with your `return` value. Do not include any other explanatory text in your response.",
-%DIF > 
-%DIF > (*@\color{blue}{\# Operation}@*)
-%DIF > INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_tshirt_product_id>', 50)
-%DIF > 
-%DIF > (*@\color{red}{\# Historical Context}@*)
-\end{lstlisting}
-\DIFmodend
-\DIFaddend 
+}\DIFdelend 
 
 \subsubsection{Operation execution and dynamical parameters retrieval}
 After the \DIFdelbegin \DIFdel{LLM generates the initial operations sequence, we employ }\DIFdelend \DIFaddbegin \DIFadd{initial chain of operations are generated, the CWM employs }\DIFaddend regex matching to extract the operations command and their types and execute each operation one by one. 
