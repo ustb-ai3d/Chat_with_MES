@@ -1,7 +1,7 @@
 
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /dir/2024-12-04.tex   Tue Jan 21 23:33:09 2025
-%DIF ADD /dir/new.tex          Tue Jan 21 23:33:09 2025
+%DIF DEL /dir/2024-12-04.tex   Tue Jan 21 23:40:53 2025
+%DIF ADD /dir/new.tex          Tue Jan 21 23:40:53 2025
 %% 
 %% Copyright 2007-2024 Elsevier Ltd
 %% 
@@ -782,7 +782,9 @@ For example, the "Hong Kong Polytechnic University" will be transformed to \{cus
 \DIFdel{When the set of candidate entities changes, such as when a customer updates their name, it triggers an update to the knowledge base}\DIFdelend \DIFaddbegin \DIFadd{The prompt for re-writing is shown in Listing~\ref{lst:query_rewrite}}\DIFaddend .
 If the information provided by the user does not match any registered entity, it indicates that the user's query is not recognized, and the CWM will return to generate a question to the user for confirmation.
 
-\DIFaddbegin \DIFmodbegin
+\DIFdelbegin %DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ },numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin \DIFmodbegin
 \begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ Prompt for rewriting request},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
 %DIF > (*@\color{red}{\# role}@*):
 %DIF >   You are a professional question optimization model. You can replace entity names in questions with standard entity names.
@@ -790,7 +792,7 @@ If the information provided by the user does not match any registered entity, it
 %DIF > (*@\color{red}{\# Standard Entity Names}@*):
 %DIF >   The correspondence between entity names and possible standard entity names is as follows:
 %DIF >   {standard_entity_mapping}
-%DIF > 
+
 %DIF > (*@\color{red}{\# Output Requirements}@*):
 %DIF >   1. Convert entity names to the most probable standard entity names.
 %DIF >   2. Replace the original entity names with "<entity_type = standard_entity_name>"
@@ -818,6 +820,7 @@ If the information provided by the user does not match any registered entity, it
 %DIF > (*@\color{red}{\# Rewritten Question}@*):
 \end{lstlisting}
 \DIFmodend
+\DIFaddbegin 
 
 \DIFaddend % Entity disambiguation by LLM
 \subsection{Multi-step Dynamical Operations \DIFdelbegin \DIFdel{Generation.}\DIFdelend \DIFaddbegin \DIFadd{Planning and Execution}\DIFaddend }
@@ -974,7 +977,7 @@ Certain redundant details are excluded, highlighted in red font.
 The content following USER INPUT represents the output from the query rewriter module.
 }
 
-\DIFaddend In addition to the \DIFdelbegin \DIFdel{textual }\DIFdelend data schema and the description of available tools, \DIFdelbegin \DIFdel{we also incorporate few-short learningby providing }\DIFdelend \DIFaddbegin \DIFadd{CWM needs to understand the production guidelines, such as the order of accessing databases, the format of the data inserted into the table and some definitions and abbreviations in the garment industry.
+\DIFaddend In addition to the \DIFdelbegin \DIFdel{textual }\DIFdelend data schema and the description of available tools, \DIFdelbegin \DIFdel{we also incorporate few-short learning by providing }\DIFdelend \DIFaddbegin \DIFadd{CWM needs to understand the production guidelines, such as the order of accessing databases, the format of the data inserted into the table and some definitions and abbreviations in the garment industry.
 Because each garment factory has customized guidelines and the knowledge base needs to be maintained dynamically, 
 this study employs the training-free few-shot learning~\mbox{%DIFAUXCMD
 \cite{hu2023chatdb} }\hspace{0pt}%DIFAUXCMD
