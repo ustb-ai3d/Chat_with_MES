@@ -627,26 +627,6 @@ The third type of operation is 'Thought,' which complements the first two by fac
 When the user's request involves summarization or statistical analysis, both 'Tool' and 'SQL' are only capable of retrieving relevant data.
 Based on this, the 'Thought' step will generate a local CoT and infer the final result.
 An example will be shown in the section \ref{sec:exp_cases}.
-
-% The foundation of CWM is transforming user's natural language queries to a series of SQL commands for operating the database.
-\subsubsection{Few-shot learning}
-In addition to the textual data schema and the description of available tools, we also incorporate few-short learning by providing representative examples as system prompts.
-These include the chain of operations, the correct tools to invoke, and the SQL commands required to resolve the request.
-% Table illustrates an example of assigning a task to workers.
-We introduce three few-shorting learning examples in total for covering the primary difficult and representative cases of the garment MES, 1) placing orders, 2) analyzing task completion progress, and 3) retrieving product details of an order.
-% It should be noted that the introduced examples are only a small represen subset of all possible transactions, instead of an enumeration of all cases.
-% The purpose of few-shot learning is to improve the understanding of LLM in operational logics
-The purpose of few-shot learning is to enhance the LLM's understanding of the operational logic of the MES and the relationships among schemas.
-A deep understanding of the database structure is crucial for CWM to generalize effectively in handling arbitrary user inquiries.
-% The CWM is a to be generalized to other transactions which involve the operations on the same schemas.
-
-\subsubsection{Prompts Design}
-Based on the prompt template from ChatDB~\cite{hu2023chatdb}, we design the prompt for achieving Multi-step Dynamical Operations Generation, including the system prompt and the user prompt.
-As shown in the prompt \ref{lst:system}, the system prompt establishes the context and objectives for the LLM. 
-It also provides details on the database schema and available tools, omitting some redundant information, which is marked in red font.
-As demonstrated in prompt~\ref{lst:user_prompt}, the user prompt contains the original user query and specifies the output formats.
-Additionally, few-shot examples are also appended to the user prompt.
-The content following USER INPUT represents the output from the query rewriter module.
 \begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={},aboveskip=0pt, belowskip=0pt]
 You are Chat With MES, a powerful AI assistant, a variant of ChatGPT that can 
 1) decide to invoke some provided tools to solve the query. 
@@ -730,6 +710,26 @@ INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '
 
 (*@\color{red}{\# Historical Context}@*)
 \end{lstlisting}
+% The foundation of CWM is transforming user's natural language queries to a series of SQL commands for operating the database.
+\subsubsection{Few-shot learning}
+In addition to the textual data schema and the description of available tools, we also incorporate few-short learning by providing representative examples as system prompts.
+These include the chain of operations, the correct tools to invoke, and the SQL commands required to resolve the request.
+% Table illustrates an example of assigning a task to workers.
+We introduce three few-shorting learning examples in total for covering the primary difficult and representative cases of the garment MES, 1) placing orders, 2) analyzing task completion progress, and 3) retrieving product details of an order.
+% It should be noted that the introduced examples are only a small represen subset of all possible transactions, instead of an enumeration of all cases.
+% The purpose of few-shot learning is to improve the understanding of LLM in operational logics
+The purpose of few-shot learning is to enhance the LLM's understanding of the operational logic of the MES and the relationships among schemas.
+A deep understanding of the database structure is crucial for CWM to generalize effectively in handling arbitrary user inquiries.
+% The CWM is a to be generalized to other transactions which involve the operations on the same schemas.
+
+\subsubsection{Prompts Design}
+Based on the prompt template from ChatDB~\cite{hu2023chatdb}, we design the prompt for achieving Multi-step Dynamical Operations Generation, including the system prompt and the user prompt.
+As shown in the prompt \ref{lst:system}, the system prompt establishes the context and objectives for the LLM. 
+It also provides details on the database schema and available tools, omitting some redundant information, which is marked in red font.
+As demonstrated in prompt~\ref{lst:user_prompt}, the user prompt contains the original user query and specifies the output formats.
+Additionally, few-shot examples are also appended to the user prompt.
+The content following USER INPUT represents the output from the query rewriter module.
+
 
 \subsubsection{Operation execution and dynamical parameters retrieval}
 After the LLM generates the initial operations sequence, we employ regex matching to extract the operations command and their types and execute each operation one by one. 
