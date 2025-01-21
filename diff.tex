@@ -1,7 +1,7 @@
 
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /dir/2024-12-04.tex   Tue Jan 21 23:40:53 2025
-%DIF ADD /dir/new.tex          Tue Jan 21 23:40:53 2025
+%DIF DEL /dir/2024-12-04.tex   Tue Jan 21 23:44:59 2025
+%DIF ADD /dir/new.tex          Tue Jan 21 23:44:59 2025
 %% 
 %% Copyright 2007-2024 Elsevier Ltd
 %% 
@@ -784,42 +784,40 @@ If the information provided by the user does not match any registered entity, it
 
 \DIFdelbegin %DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ },numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
 %DIFDELCMD < %%%
-\DIFdelend \DIFaddbegin \DIFmodbegin
-\begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ Prompt for rewriting request},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
-%DIF > (*@\color{red}{\# role}@*):
-%DIF >   You are a professional question optimization model. You can replace entity names in questions with standard entity names.
-%DIF > 
-%DIF > (*@\color{red}{\# Standard Entity Names}@*):
-%DIF >   The correspondence between entity names and possible standard entity names is as follows:
-%DIF >   {standard_entity_mapping}
+\DIFdelend \DIFaddbegin \begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ Prompt for rewriting request},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+(*@\color{red}{\# role}@*):
+  You are a professional question optimization model. You can replace entity names in questions with standard entity names.
 
-%DIF > (*@\color{red}{\# Output Requirements}@*):
-%DIF >   1. Convert entity names to the most probable standard entity names.
-%DIF >   2. Replace the original entity names with "<entity_type = standard_entity_name>"
-%DIF > 
-%DIF > (*@\color{red}{\# Output Examples}@*):
-%DIF >   1. Original Question:
-%DIF >   Orders of PolyU
-%DIF >   Rewritten Question:
-%DIF >   <customers.customer_name = 'PolyU'> orders
-%DIF >   2. Original Question:
-%DIF >   What are the sewing tasks that use silk
-%DIF >   Rewritten Question:
-%DIF >   What are the sewing tasks that use <products.product_name = 'Silk'>
-%DIF >   3. Original Question:
-%DIF >   What does the main warehouse have
-%DIF >   Rewritten Question:
-%DIF >   What does <warehouse.warehouse_name = 'Main Warehouse'> have
-%DIF >   4. Original Question:
-%DIF >   What tasks does the Advanced Sewers group have
-%DIF >   Rewritten Question:
-%DIF >   What tasks does <working_group.name = 'Advanced Sewers'> have
-%DIF > 
-%DIF >   {question}
-%DIF > 
-%DIF > (*@\color{red}{\# Rewritten Question}@*):
+(*@\color{red}{\# Standard Entity Names}@*):
+  The correspondence between entity names and possible standard entity names is as follows:
+  {standard_entity_mapping}
+
+(*@\color{red}{\# Output Requirements}@*):
+  1. Convert entity names to the most probable standard entity names.
+  2. Replace the original entity names with "<entity_type = standard_entity_name>"
+
+(*@\color{red}{\# Output Examples}@*):
+  1. Original Question:
+  Orders of PolyU
+  Rewritten Question:
+  <customers.customer_name = 'PolyU'> orders
+  2. Original Question:
+  What are the sewing tasks that use silk
+  Rewritten Question:
+  What are the sewing tasks that use <products.product_name = 'Silk'>
+  3. Original Question:
+  What does the main warehouse have
+  Rewritten Question:
+  What does <warehouse.warehouse_name = 'Main Warehouse'> have
+  4. Original Question:
+  What tasks does the Advanced Sewers group have
+  Rewritten Question:
+  What tasks does <working_group.name = 'Advanced Sewers'> have
+
+  {question}
+
+(*@\color{red}{\# Rewritten Question}@*):
 \end{lstlisting}
-\DIFmodend
 \DIFaddbegin 
 
 \DIFaddend % Entity disambiguation by LLM
@@ -977,7 +975,7 @@ Certain redundant details are excluded, highlighted in red font.
 The content following USER INPUT represents the output from the query rewriter module.
 }
 
-\DIFaddend In addition to the \DIFdelbegin \DIFdel{textual }\DIFdelend data schema and the description of available tools, \DIFdelbegin \DIFdel{we also incorporate few-short learning by providing }\DIFdelend \DIFaddbegin \DIFadd{CWM needs to understand the production guidelines, such as the order of accessing databases, the format of the data inserted into the table and some definitions and abbreviations in the garment industry.
+\DIFaddend In addition to the \DIFdelbegin \DIFdel{textual }\DIFdelend data schema and the description of available tools, \DIFdelbegin \DIFdel{we also incorporate few-short learningby providing }\DIFdelend \DIFaddbegin \DIFadd{CWM needs to understand the production guidelines, such as the order of accessing databases, the format of the data inserted into the table and some definitions and abbreviations in the garment industry.
 Because each garment factory has customized guidelines and the knowledge base needs to be maintained dynamically, 
 this study employs the training-free few-shot learning~\mbox{%DIFAUXCMD
 \cite{hu2023chatdb} }\hspace{0pt}%DIFAUXCMD
@@ -1056,11 +1054,11 @@ The structured records will be automatically organized as tables with the markdo
 %  showstringspaces=false,                              % 不显示字符串中的空格
 %  language=text,                                        % 设置语言
 % }
-\DIFdelbegin %DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:system},caption={System prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+\DIFdelbegin %DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={},aboveskip=0pt, belowskip=0pt]
 %DIFDELCMD < %%%
 %DIFAUXCMD NEXT
 \DIFmodbegin
-\begin{lstlisting}[style=prompt, label={lst:system},caption={System prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
+\begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={},aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
 %DIF < You are Chat With MES, a powerful AI assistant, a variant of ChatGPT that can 
 %DIF < 1) decide to invoke some provided tools to solve the query. 
 %DIF < 2) utilize the database of the Manufacturing Execution System as external symbolic memory. 
@@ -1087,16 +1085,7 @@ The structured records will be automatically organized as tables with the markdo
 %DIF < );
 %DIF < -
 %DIF < % Other table creation scripts.
-\end{lstlisting}
-\DIFmodend %DIFAUXCMD
-%DIFDELCMD < \end{lstlisting}
-%DIFDELCMD < 
-
-%DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:user_prompt},caption={User prompt for generating the planned multi-step Operations},aboveskip=0pt, belowskip=0pt]
-%DIFDELCMD < %%%
-%DIFAUXCMD NEXT
-\DIFmodbegin
-\begin{lstlisting}[style=prompt, label={lst:user_prompt},caption={User prompt for generating the planned multi-step Operations},aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
+%DIF < -
 %DIF < Please tell me what basic operations, including sql, tool,and thought, should I use in order to respond to the "USER INPUT". If it needs multiple operations, please list them step by step concisely, and indicate whether the operation involves calling a tool or  accessing a database via SQL. If there is no need to use any operations, reply to the "USER INPUT" directly.
 %DIF < At all times, you should prioritize using the provided tool. If the tool does not meet the requirements, only then may you resort to using SQL.
 %DIF < The output should be a markdown code snippet formatted in the following schema, including the leading and trailing "\`\`\`" and "\`\`\`":
