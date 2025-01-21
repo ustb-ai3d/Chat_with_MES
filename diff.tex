@@ -1,7 +1,7 @@
 
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /dir/2024-12-04.tex   Tue Jan 21 23:44:59 2025
-%DIF ADD /dir/new.tex          Tue Jan 21 23:44:59 2025
+%DIF DEL /dir/2024-12-04.tex   Tue Jan 21 23:56:40 2025
+%DIF ADD /dir/new.tex          Tue Jan 21 23:56:40 2025
 %% 
 %% Copyright 2007-2024 Elsevier Ltd
 %% 
@@ -782,9 +782,7 @@ For example, the "Hong Kong Polytechnic University" will be transformed to \{cus
 \DIFdel{When the set of candidate entities changes, such as when a customer updates their name, it triggers an update to the knowledge base}\DIFdelend \DIFaddbegin \DIFadd{The prompt for re-writing is shown in Listing~\ref{lst:query_rewrite}}\DIFaddend .
 If the information provided by the user does not match any registered entity, it indicates that the user's query is not recognized, and the CWM will return to generate a question to the user for confirmation.
 
-\DIFdelbegin %DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ },numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
-%DIFDELCMD < %%%
-\DIFdelend \DIFaddbegin \begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ Prompt for rewriting request},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+\begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ Prompt for rewriting request},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
 (*@\color{red}{\# role}@*):
   You are a professional question optimization model. You can replace entity names in questions with standard entity names.
 
@@ -1005,23 +1003,23 @@ It also provides details on the database schema and available tools, omitting so
 As demonstrated in prompt~\ref{lst:user_prompt}, the user prompt contains the original user query and specifies the output formats.
 Additionally, few-shot examples are also appended to the user prompt.
 The content following USER INPUT represents the output from the query rewriter module.
-}\DIFdelend \DIFaddbegin \DIFmodbegin
-\begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
-%DIF > You are now the following python function: 
-%DIF > # "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
-%DIF > "If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
-%DIF > "please output a list of tool operations with distinct parameters."
-%DIF >         
-%DIF > def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
-%DIF > Only respond with your `return` value. Do not include any other explanatory text in your response.",
-%DIF > 
-%DIF > (*@\color{blue}{\# Operation}@*)
-%DIF > INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_tshirt_product_id>', 50)
-%DIF > 
-%DIF > (*@\color{red}{\# Historical Context}@*)
+}%DIFDELCMD < 
+
+%DIFDELCMD < %%%
+\DIFdelend \begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+You are now the following python function: 
+# "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
+"If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
+"please output a list of tool operations with distinct parameters."
+        
+def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
+Only respond with your `return` value. Do not include any other explanatory text in your response.",
+
+(*@\color{blue}{\# Operation}@*)
+INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_tshirt_product_id>', 50)
+
+(*@\color{red}{\# Historical Context}@*)
 \end{lstlisting}
-\DIFmodend
-\DIFaddend 
 
 \subsubsection{Operation execution and dynamical parameters retrieval}
 After the \DIFdelbegin \DIFdel{LLM generates the initial operations sequence, we employ }\DIFdelend \DIFaddbegin \DIFadd{initial chain of operations are generated, the CWM employs }\DIFaddend regex matching to extract the operations command and their types and execute each operation one by one. 
@@ -1040,20 +1038,6 @@ The structured records will be automatically organized as tables with the markdo
 
 
 
-% The prompt adheres to the CO-STAR format, as demonstrated in xxx.
-% \lstset{
-%  columns=fixed,       
-%  numbers=left,                                        % 在左侧显示行号
-%  numberstyle=\scriptsize\color{gray},                       % 设定行号格式
-%  frame=none,                                          % 不显示背景边框
-%  backgroundcolor=\color[RGB]{245,245,244},            % 设定背景颜色
-%  keywordstyle=\color[RGB]{40,40,255},                 % 设定关键字颜色
-%  numberstyle=\footnotesize\color{darkgray},           
-%  commentstyle=\it\color[RGB]{0,96,96},                % 设置代码注释的格式
-%  stringstyle=\rmfamily\slshape\color[RGB]{128,0,0},   % 设置字符串格式
-%  showstringspaces=false,                              % 不显示字符串中的空格
-%  language=text,                                        % 设置语言
-% }
 \DIFdelbegin %DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={},aboveskip=0pt, belowskip=0pt]
 %DIFDELCMD < %%%
 %DIFAUXCMD NEXT
@@ -1128,7 +1112,20 @@ The structured records will be automatically organized as tables with the markdo
 \DIFmodend %DIFAUXCMD
 %DIFDELCMD < \end{lstlisting}
 %DIFDELCMD < %%%
-\DIFdelend 
+\DIFdelend %DIF >  The prompt adheres to the CO-STAR format, as demonstrated in xxx.
+%DIF >  \lstset{
+%DIF >   columns=fixed,       
+%DIF >   numbers=left,                                        % 在左侧显示行号
+%DIF >   numberstyle=\scriptsize\color{gray},                       % 设定行号格式
+%DIF >   frame=none,                                          % 不显示背景边框
+%DIF >   backgroundcolor=\color[RGB]{245,245,244},            % 设定背景颜色
+%DIF >   keywordstyle=\color[RGB]{40,40,255},                 % 设定关键字颜色
+%DIF >   numberstyle=\footnotesize\color{darkgray},           
+%DIF >   commentstyle=\it\color[RGB]{0,96,96},                % 设置代码注释的格式
+%DIF >   stringstyle=\rmfamily\slshape\color[RGB]{128,0,0},   % 设置字符串格式
+%DIF >   showstringspaces=false,                              % 不显示字符串中的空格
+%DIF >   language=text,                                        % 设置语言
+%DIF >  }
 
 
 
@@ -1187,12 +1184,17 @@ store\_materials &
   Automatically store materials in a free inventory. &
   \begin{tabular}[c]{@{}l@{}}\textbf{material\_id}: ID of material\\ \textbf{number}: number of stored materials\end{tabular} \\
   \hline
+get\_busy\_workers &
+  Find all working groups and their task counts. &
+  None \\
+  \hline
 complete\_task &\makecell[l]{
   workers reporting the completion of specific production \\ tasks, it automatically adjusts the quantities of finished\\ products in the warehouse.} &
   \begin{tabular}[c]{@{}l@{}}\textbf{task\_id}: ID of task\\ \textbf{task\_type}: sewing or cutting\\ \makecell[l]{\textbf{quantity}: number of completed  \\ products or work-in-progress}\end{tabular} \\
 \end{tabular}
 }
 \end{table}
+%DIF >  tool_get_busy_workers
 
 \subsubsection{Requests Dataset}
 Based on the database schema of the MES and the rows inside, we designed a requests dataset including 55 requests covering common operations in a garment factory: placing orders, checking inventory, work assignment, materials allocation, and so on.
