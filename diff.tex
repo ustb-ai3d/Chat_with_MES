@@ -1,7 +1,7 @@
 
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /dir/2024-12-04.tex   Wed Jan 22 00:03:01 2025
-%DIF ADD /dir/new.tex          Wed Jan 22 00:03:01 2025
+%DIF DEL /dir/2024-12-04.tex   Wed Jan 22 00:48:15 2025
+%DIF ADD /dir/new.tex          Wed Jan 22 00:48:15 2025
 %% 
 %% Copyright 2007-2024 Elsevier Ltd
 %% 
@@ -889,79 +889,102 @@ We build an LLM-based agent to autonomously decide which tool to invoke and dete
 When the user's request involves summarization or statistical analysis, both 'Tool' and 'SQL' are only capable of retrieving relevant data.
 Based on this, the 'Thought' step will generate a local CoT and infer the final result.
 An example will be shown in the section \ref{sec:exp_cases}.
+\DIFdelbegin %DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={},aboveskip=0pt, belowskip=0pt]
+%DIFDELCMD < %%%
+\DIFdelend \DIFaddbegin 
 
-% The foundation of CWM is transforming user's natural language queries to a series of SQL commands for operating the database.
-\DIFaddbegin \DIFmodbegin
-\begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={Prompt for generating the planned multi-step Operations},aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
-%DIF > You are Chat With MES, a powerful AI assistant, a variant of ChatGPT that can 
-%DIF > 1) decide to invoke some provided tools to solve the query. 
-%DIF > 2) utilize the database of the Manufacturing Execution System as external symbolic memory. 
-%DIF > For any user query, you should always prioritize using the given tools to complete it.
-%DIF > The following are the tools you can use, including their names, descriptions, and input args.
-%DIF > """
-%DIF > tool_allocate_task_order: Allocate the cutting task and sewing tasks for all products belonging to the order, and return
-%DIF > the allocated tasks and corresponding working groups.
-%DIF > {
-%DIF >     'order_id': {'title': 'Order Id', 'description': 'The order ID, an integer.', 'type': 'integer'}, 
-%DIF >     'order_name': {'title': 'Order Name', 'description': 'The order name, a string.', 'type': 'string'}
-%DIF > }
-%DIF > 
-%DIF > % Description of other Tools.
-%DIF > """
-%DIF > Only if you cannot handle the command/query with any given tools, You are authorized to directly access the database.
-%DIF > In this case, you are an expert in databases, proficient in SQL statements and can use the database to help users. The details of tables in the database are delimited by triple quotes.
-%DIF > """
-%DIF > 
-%DIF > -- Customer Table
-%DIF > CREATE TABLE `customers` (
-%DIF >   `id` VARCHAR(36) PRIMARY KEY COMMENT 'Customer ID',
-%DIF >   `customer_name` VARCHAR(255) NOT NULL COMMENT 'Customer Name'
-%DIF > );
-%DIF > 
-%DIF > % Other table creation scripts.
-%DIF > 
-%DIF > Please tell me what basic operations, including sql, tool,and thought, should I use in order to respond to the "USER INPUT". If it needs multiple operations, please list them step by step concisely, and indicate whether the operation involves calling a tool or  accessing a database via SQL. If there is no need to use any operations, reply to the "USER INPUT" directly.
-%DIF > At all times, you should prioritize using the provided tool. If the tool does not meet the requirements, only then may you resort to using SQL.
-%DIF > The output should be a markdown code snippet formatted in the following schema, including the leading and trailing "\`\`\`" and "\`\`\`":
-%DIF > ```
-%DIF > Step1: <Description of first step>
-%DIF > SQL `SQL command for step1`
-%DIF > 
-%DIF > Step2: <Description of first step>
-%DIF > SQL `SQL command for step2`
-%DIF > 
-%DIF > Step3: <Description of second step>
-%DIF > Tool `Tool name, arguments for tool, purpose of using this tool`
-%DIF > 
-%DIF > Step4: <Description of fourth step>
-%DIF > Thought `Purpose of this intermediate reasoning step, what intermediate results are expected. and how to get them based on the results from the previous steps.`
-%DIF > 
-%DIF > ```
-%DIF > 
-%DIF > Backticks are important and must be added at the beginning and end of the command for every step!
-%DIF > 
-%DIF > (*@\color{orange}{Here are some examples}@*):
-%DIF > 
-%DIF > USER INPUT: Retrieve all orders and item details for the Customer PolyU
-%DIF > ANSWER:
-%DIF > ```
-%DIF > Step1: Retrieve the customer ID for the customer with the name "PolyU"
-%DIF > 
-%DIF > Execute:
-%DIF > SQL `SELECT id FROM customers WHERE customer_name = 'PolyU';`
-%DIF > 
-%DIF > Step2: Retrieve the details of products for each order, including product attributes and type description
-%DIF > Tool `tool_find_order_details, {'order_id': <order_id>}, Find the product details of an order`
-%DIF > ```
-%DIF > % Omitted other few-shot examples.
-%DIF > 
-%DIF > (*@\color{blue}{USER INPUT}@*): Find the latest order from <customers.customer\_name = 'PolyU'> that requires a <products.attributes = 'Blue, XL size'> <products\_types.description = 'Sweater'>, increase the quantity of the <products.attributes = 'Blue, XL size'> <products\_types.description = 'Sweater'> by 10 units, and then automatically allocate the production tasks for this order.
-%DIF > 
-%DIF > (*@\color{blue}{ANSWER}@*): 
+%DIF >  The foundation of CWM is transforming user's natural language queries to a series of SQL commands for operating the database.
+\begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={Prompt for generating the planned multi-step Operations},aboveskip=0pt, belowskip=0pt]
+You are Chat With MES, a powerful AI assistant, a variant of ChatGPT that can 
+1) decide to invoke some provided tools to solve the query. 
+2) utilize the database of the Manufacturing Execution System as external symbolic memory. 
+For any user query, you should always prioritize using the given tools to complete it.
+The following are the tools you can use, including their names, descriptions, and input args.
+"""
+tool_allocate_task_order: Allocate the cutting task and sewing tasks for all products belonging to the order, and return
+the allocated tasks and corresponding working groups.
+{
+    'order_id': {'title': 'Order Id', 'description': 'The order ID, an integer.', 'type': 'integer'}, 
+    'order_name': {'title': 'Order Name', 'description': 'The order name, a string.', 'type': 'string'}
+}
+
+% Description of other Tools.
+"""
+Only if you cannot handle the command/query with any given tools, You are authorized to directly access the database.
+In this case, you are an expert in databases, proficient in SQL statements and can use the database to help users. The details of tables in the database are delimited by triple quotes.
+"""
+
+-- Customer Table
+CREATE TABLE `customers` (
+  `id` VARCHAR(36) PRIMARY KEY COMMENT 'Customer ID',
+  `customer_name` VARCHAR(255) NOT NULL COMMENT 'Customer Name'
+);
+
+% Other table creation scripts.
+
+Please tell me what basic operations, including sql, tool,and thought, should I use in order to respond to the "USER INPUT". If it needs multiple operations, please list them step by step concisely, and indicate whether the operation involves calling a tool or  accessing a database via SQL. If there is no need to use any operations, reply to the "USER INPUT" directly.
+At all times, you should prioritize using the provided tool. If the tool does not meet the requirements, only then may you resort to using SQL.
+The output should be a markdown code snippet formatted in the following schema, including the leading and trailing "\`\`\`" and "\`\`\`":
+```
+Step1: <Description of first step>
+SQL `SQL command for step1`
+
+Step2: <Description of first step>
+SQL `SQL command for step2`
+
+Step3: <Description of second step>
+Tool `Tool name, arguments for tool, purpose of using this tool`
+
+Step4: <Description of fourth step>
+Thought `Purpose of this intermediate reasoning step, what intermediate results are expected. and how to get them based on the results from the previous steps.`
+
+```
+
+Backticks are important and must be added at the beginning and end of the command for every step!
+
+(*@\color{orange}{Here are some examples}@*):
+
+USER INPUT: Retrieve all orders and item details for the Customer PolyU
+ANSWER:
+```
+Step1: Retrieve the customer ID for the customer with the name "PolyU"
+
+Execute:
+SQL `SELECT id FROM customers WHERE customer_name = 'PolyU';`
+
+Step2: Retrieve the details of products for each order, including product attributes and type description
+Tool `tool_find_order_details, {'order_id': <order_id>}, Find the product details of an order`
+```
+% Omitted other few-shot examples.
+
+(*@\color{blue}{USER INPUT}@*): Find the latest order from <customers.customer\_name = 'PolyU'> that requires a <products.attributes = 'Blue, XL size'> <products\_types.description = 'Sweater'>, increase the quantity of the <products.attributes = 'Blue, XL size'> <products\_types.description = 'Sweater'> by 10 units, and then automatically allocate the production tasks for this order.
+
+(*@\color{blue}{ANSWER}@*): 
 \end{lstlisting}
-\DIFmodend
 
-\DIFaddend \subsubsection{\DIFdelbegin \DIFdel{Few-shot learning}\DIFdelend \DIFaddbegin \DIFadd{Pre-planning operations}\DIFaddend }
+\DIFdelbegin %DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+%DIFDELCMD < %%%
+%DIFAUXCMD NEXT
+\DIFmodbegin
+\begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
+%DIF < You are now the following python function: 
+%DIF < # "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
+%DIF < "If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
+%DIF < "please output a list of tool operations with distinct parameters."
+%DIF <         -
+%DIF < def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
+%DIF < Only respond with your `return` value. Do not include any other explanatory text in your response.",
+%DIF < -
+%DIF < (*@\color{blue}{\# Operation}@*)
+%DIF < INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_tshirt_product_id>', 50)
+%DIF < -
+%DIF < (*@\color{red}{\# Historical Context}@*)
+\end{lstlisting}
+\DIFmodend %DIFAUXCMD
+%DIFDELCMD < \end{lstlisting}
+%DIFDELCMD < %%%
+%DIF <  The foundation of CWM is transforming user's natural language queries to a series of SQL commands for operating the database.
+\DIFdelend \subsubsection{\DIFdelbegin \DIFdel{Few-shot learning}\DIFdelend \DIFaddbegin \DIFadd{Pre-planning operations}\DIFaddend }
 %DIF >  In Dynamic Multi-step Operations Planning, the CWM will strategize operations prior to execution, based
 \DIFaddbegin \DIFadd{In Multi-step Dynamical Operations Planning and Execution, the CWM will pre-plan the operations prior to execution, 
 Based on the prompt template from ChatDB~\mbox{%DIFAUXCMD
@@ -973,7 +996,7 @@ Certain redundant details are excluded, highlighted in red font.
 The content following USER INPUT represents the output from the query rewriter module.
 }
 
-\DIFaddend In addition to the \DIFdelbegin \DIFdel{textual }\DIFdelend data schema and the description of available tools, \DIFdelbegin \DIFdel{we also incorporate few-short learning by providing }\DIFdelend \DIFaddbegin \DIFadd{CWM needs to understand the production guidelines, such as the order of accessing databases, the format of the data inserted into the table and some definitions and abbreviations in the garment industry.
+\DIFaddend In addition to the \DIFdelbegin \DIFdel{textual }\DIFdelend data schema and the description of available tools, \DIFdelbegin \DIFdel{we also incorporate few-short learningby providing }\DIFdelend \DIFaddbegin \DIFadd{CWM needs to understand the production guidelines, such as the order of accessing databases, the format of the data inserted into the table and some definitions and abbreviations in the garment industry.
 Because each garment factory has customized guidelines and the knowledge base needs to be maintained dynamically, 
 this study employs the training-free few-shot learning~\mbox{%DIFAUXCMD
 \cite{hu2023chatdb} }\hspace{0pt}%DIFAUXCMD
@@ -1003,96 +1026,23 @@ It also provides details on the database schema and available tools, omitting so
 As demonstrated in prompt~\ref{lst:user_prompt}, the user prompt contains the original user query and specifies the output formats.
 Additionally, few-shot examples are also appended to the user prompt.
 The content following USER INPUT represents the output from the query rewriter module.
-}%DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={},aboveskip=0pt, belowskip=0pt]
-%DIFDELCMD < %%%
-%DIFAUXCMD NEXT
-\DIFmodbegin
-\begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={},aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
-%DIF < You are Chat With MES, a powerful AI assistant, a variant of ChatGPT that can 
-%DIF < 1) decide to invoke some provided tools to solve the query. 
-%DIF < 2) utilize the database of the Manufacturing Execution System as external symbolic memory. 
-%DIF < For any user query, you should always prioritize using the given tools to complete it.
-%DIF < The following are the tools you can use, including their names, descriptions, and input args.
-%DIF < """
-%DIF < tool_allocate_task_order: Allocate the cutting task and sewing tasks for all products belonging to the order, and return
-%DIF < the allocated tasks and corresponding working groups.
-%DIF < {
-%DIF <     'order_id': {'title': 'Order Id', 'description': 'The order ID, an integer.', 'type': 'integer'}, 
-%DIF <     'order_name': {'title': 'Order Name', 'description': 'The order name, a string.', 'type': 'string'}
-%DIF < }
-%DIF < -
-%DIF < % Description of other Tools.
-%DIF < """
-%DIF < Only if you cannot handle the command/query with any given tools, You are authorized to directly access the database.
-%DIF < In this case, you are an expert in databases, proficient in SQL statements and can use the database to help users. The details of tables in the database are delimited by triple quotes.
-%DIF < """
-%DIF < -
-%DIF < -- Customer Table
-%DIF < CREATE TABLE `customers` (
-%DIF <   `id` VARCHAR(36) PRIMARY KEY COMMENT 'Customer ID',
-%DIF <   `customer_name` VARCHAR(255) NOT NULL COMMENT 'Customer Name'
-%DIF < );
-%DIF < -
-%DIF < % Other table creation scripts.
-%DIF < -
-%DIF < Please tell me what basic operations, including sql, tool,and thought, should I use in order to respond to the "USER INPUT". If it needs multiple operations, please list them step by step concisely, and indicate whether the operation involves calling a tool or  accessing a database via SQL. If there is no need to use any operations, reply to the "USER INPUT" directly.
-%DIF < At all times, you should prioritize using the provided tool. If the tool does not meet the requirements, only then may you resort to using SQL.
-%DIF < The output should be a markdown code snippet formatted in the following schema, including the leading and trailing "\`\`\`" and "\`\`\`":
-%DIF < ```
-%DIF < Step1: <Description of first step>
-%DIF < SQL `SQL command for step1`
-%DIF < -
-%DIF < Step2: <Description of first step>
-%DIF < SQL `SQL command for step2`
-%DIF < -
-%DIF < Step3: <Description of second step>
-%DIF < Tool `Tool name, arguments for tool, purpose of using this tool`
-%DIF < -
-%DIF < Step4: <Description of fourth step>
-%DIF < Thought `Purpose of this intermediate reasoning step, what intermediate results are expected. and how to get them based on the results from the previous steps.`
-%DIF < -
-%DIF < ```
-%DIF < -
-%DIF < Backticks are important and must be added at the beginning and end of the command for every step!
-%DIF < -
-%DIF < (*@\color{orange}{Here are some examples}@*):
-%DIF < -
-%DIF < USER INPUT: Retrieve all orders and item details for the Customer PolyU
-%DIF < ANSWER:
-%DIF < ```
-%DIF < Step1: Retrieve the customer ID for the customer with the name "PolyU"
-%DIF < -
-%DIF < Execute:
-%DIF < SQL `SELECT id FROM customers WHERE customer_name = 'PolyU';`
-%DIF < -
-%DIF < Step2: Retrieve the details of products for each order, including product attributes and type description
-%DIF < Tool `tool_find_order_details, {'order_id': <order_id>}, Find the product details of an order`
-%DIF < ```
-%DIF < % Omitted other few-shot examples.
-%DIF < -
-%DIF < (*@\color{blue}{USER INPUT}@*): Find the latest order from <customers.customer\_name = 'PolyU'> that requires a <products.attributes = 'Blue, XL size'> <products\_types.description = 'Sweater'>, increase the quantity of the <products.attributes = 'Blue, XL size'> <products\_types.description = 'Sweater'> by 10 units, and then automatically allocate the production tasks for this order.
-%DIF < -
-%DIF < (*@\color{blue}{ANSWER}@*): 
+}\DIFdelend \DIFaddbegin \DIFmodbegin
+\begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt,alsolanguage=DIFcode]
+%DIF > You are now the following python function: 
+%DIF > # "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
+%DIF > "If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
+%DIF > "please output a list of tool operations with distinct parameters."
+%DIF >         
+%DIF > def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
+%DIF > Only respond with your `return` value. Do not include any other explanatory text in your response.",
+%DIF > 
+%DIF > (*@\color{blue}{\# Operation}@*)
+%DIF > INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_tshirt_product_id>', 50)
+%DIF > 
+%DIF > (*@\color{red}{\# Historical Context}@*)
 \end{lstlisting}
-\DIFmodend %DIFAUXCMD
-%DIFDELCMD < \end{lstlisting}
-%DIFDELCMD < 
-
-%DIFDELCMD < %%%
-\DIFdelend \begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
-You are now the following python function: 
-# "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
-"If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
-"please output a list of tool operations with distinct parameters."
-        
-def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
-Only respond with your `return` value. Do not include any other explanatory text in your response.",
-
-(*@\color{blue}{\# Operation}@*)
-INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_tshirt_product_id>', 50)
-
-(*@\color{red}{\# Historical Context}@*)
-\end{lstlisting}
+\DIFmodend
+\DIFaddend 
 
 \subsubsection{Operation execution and dynamical parameters retrieval}
 After the \DIFdelbegin \DIFdel{LLM generates the initial operations sequence, we employ }\DIFdelend \DIFaddbegin \DIFadd{initial chain of operations are generated, the CWM employs }\DIFaddend regex matching to extract the operations command and their types and execute each operation one by one. 
