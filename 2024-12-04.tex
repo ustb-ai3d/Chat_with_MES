@@ -560,7 +560,38 @@ When the set of candidate entities changes, such as when a customer updates thei
 If the information provided by the user does not match any registered entity, it indicates that the user's query is not recognized, and the CWM will return to generate a question to the user for confirmation.
 
 \begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ },numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
-  
+  (*@\color{red}{\# role}@*):
+  You are a professional question optimization model. You can replace entity names in questions with standard entity names.
+
+(*@\color{red}{\# Standard Entity Names}@*):
+  The correspondence between entity names and possible standard entity names is as follows:
+  {standard_entity_mapping}
+
+(*@\color{red}{\# Output Requirements}@*):
+  1. Convert entity names to the most probable standard entity names.
+  2. Replace the original entity names with "<entity_type = standard_entity_name>"
+
+(*@\color{red}{\# Output Examples}@*):
+  1. Original Question:
+  Orders of PolyU
+  Rewritten Question:
+  <customers.customer_name = 'PolyU'> orders
+  2. Original Question:
+  What are the sewing tasks that use silk
+  Rewritten Question:
+  What are the sewing tasks that use <products.product_name = 'Silk'>
+  3. Original Question:
+  What does the main warehouse have
+  Rewritten Question:
+  What does <warehouse.warehouse_name = 'Main Warehouse'> have
+  4. Original Question:
+  What tasks does the Advanced Sewers group have
+  Rewritten Question:
+  What tasks does <working_group.name = 'Advanced Sewers'> have
+
+  {question}
+
+(*@\color{red}{\# Rewritten Question}@*):
 
 \end{lstlisting}
 % Entity disambiguation by LLM
@@ -645,7 +676,7 @@ The structured records will be automatically organized as tables with the markdo
 %  showstringspaces=false,                              % 不显示字符串中的空格
 %  language=text,                                        % 设置语言
 % }
-\begin{lstlisting}[style=prompt, label={lst:system},caption={System prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+\begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={},aboveskip=0pt, belowskip=0pt]
 You are Chat With MES, a powerful AI assistant, a variant of ChatGPT that can 
 1) decide to invoke some provided tools to solve the query. 
 2) utilize the database of the Manufacturing Execution System as external symbolic memory. 
@@ -672,9 +703,7 @@ CREATE TABLE `customers` (
 );
 
 % Other table creation scripts.
-\end{lstlisting}
 
-\begin{lstlisting}[style=prompt, label={lst:user_prompt},caption={User prompt for generating the planned multi-step Operations},aboveskip=0pt, belowskip=0pt]
 Please tell me what basic operations, including sql, tool,and thought, should I use in order to respond to the "USER INPUT". If it needs multiple operations, please list them step by step concisely, and indicate whether the operation involves calling a tool or  accessing a database via SQL. If there is no need to use any operations, reply to the "USER INPUT" directly.
 At all times, you should prioritize using the provided tool. If the tool does not meet the requirements, only then may you resort to using SQL.
 The output should be a markdown code snippet formatted in the following schema, including the leading and trailing "\`\`\`" and "\`\`\`":
