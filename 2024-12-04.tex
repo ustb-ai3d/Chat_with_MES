@@ -892,163 +892,86 @@ The CWM demonstrates a strong understanding of the internal relationships betwee
 
 \begin{center}
 \begin{longtable}{p{390pt}}
-\caption{Example of creating an order}
-    \label{tab:case_place_order}\\
-    % \centering
-    % \begin{tabular}{p{390pt}}
+\caption{Example of reorganize production plan}
+    \label{tab:case_reorganize_production_plan}\\
     \toprule
-      \textbf{Question:}     \\
-       % \makecell[l]{I am from The Hong Kong Polytechnic University. Today is July 2, 2024. Please \\ help me create an order for 50 red T-shirts in size M and 30 blue sweaters in size XL.} \\
-       Please create an order for the customer "Hong Kong Polytechnic University," which includes 50 red T-shirts in size M and 30 blue sweaters in size XL. Once the order is created, please proceed to allocate tasks.
-\\
+      \textbf{Question:} \\
+       The dress order of Emily requires delivery by April 5, 2024. Please re-arrange the production plan and assign tasks to the task group with the fewest tasks currently. Provide a new production plan.\\
           \hline
-          \textbf{Solution:}\\
-          \textbf{Query Rewriting:}
-           Please create an order for the customer <customers.customer\_name = 'PolyU'>, which includes 50 <products.attributes = 'Red'> <products\_types.description = 'T-shirt'> in <products.attributes = 'M size'> and 30 <products.attributes = 'Blue'> <products\_types.description = 'Sweater'> in <products.attributes = 'XL size'>. Once the order is created, please proceed to allocate tasks.\\
-          \hline
+          \textbf{Query Rewriting: }
+          The <orders.order\_name = 'Emily\_Dress'> order requires delivery by April 5, 2024. Please re-arrange the production plan and assign tasks to the task group with the fewest tasks currently. Provide a new production plan.\\
+ \hline
 \textbf{Chain of Operations:}\\
 
 \begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
-Step1: Retrieve the customer ID for the customer with the name "PolyU"
-SQL `SELECT id FROM customers WHERE customer_name = 'PolyU';`
+Step 1: Retrieve the order ID for the order with the name "Emily_Dress"
+SQL `SELECT id FROM orders WHERE order_name = 'Emily_Dress';`
 
-Step2: Retrieve the product ID for the product with attributes "Red, M size" and type "T-shirt"
-SQL `SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Red, M size' AND pt.description = 'T-shirt';`
+Step2: Retrieve the product details related to the order\n["tool_find_order_details, {'order_id': 3}, Find the product details of an order"]
+Tool `tool_find_order_details, {'order_id': 3}, Find the product details of an order`
 
-Step3: Retrieve the product ID for the product with attributes "Blue, XL size" and type "Sweater"
-SQL `SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Blue, XL size' AND pt.description = 'Sweater';`
+Step3: Retrieve the current cutting task's working group ID for the order
+SQL `SELECT working_group_id FROM cutting_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
 
-Step4: Create a new order with the default order name "Order20240702120000" for the customer "PolyU"
-SQL `INSERT INTO orders (user_id, order_name, created_at) VALUES ('<customer_id>', 'Order20240702120000', '2024-07-02 12:00:00');`
+Step4: Retrieve the current sewing task's working group ID for the order
+SQL `SELECT working_group_id FROM sewing_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
 
-Step5: Retrieve the order ID for the newly created order
-SQL `SELECT id FROM orders WHERE order_name = 'Order20240702120000';`
+Step5: Get the current list of all working groups and their task counts\ntool_get_busy_workers, {}, Get the current list of all working groups and their task counts
+Tool `tool_get_busy_workers, {}, Get the current list of all working groups and their task counts`
 
-Step6: Insert 50 units of the product "Red, M size T-shirt" into the order
-SQL `INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_m_tshirt_product_id>', 50);`
+Step6: Compare the task counts of all cutting groups obtained in Step5 and identify the group with the fewest tasks.
+Thought `Compare the task counts of all cutting groups obtained in Step5 and identify the group with the fewest tasks.`
 
-Step7: Insert 30 units of the product "Blue, XL size Sweater" into the order
-SQL `INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<blue_xl_sweater_product_id>', 30);`
+Step7: Compare the task counts of all sewing groups obtained in Step5 and identify the group with the fewest tasks.
+Thought `Compare the task counts of all sewing groups obtained in Step5 and identify the group with the fewest tasks.`
 
-Step8: Allocate the cutting and sewing tasks for the newly created order
-Tool `tool_allocate_task_order, {'order_id': <order_id>, 'order_name': 'Order20240702120000'}, Allocate the cutting and sewing tasks for the order`
-\end{lstlisting}\\ \hline
-          
-\textbf{Step 1:} SQL, Retrieve the customer ID for the customer with the name "PolyU"\\
-Execute:\\
-\lstinline!SELECT id FROM customers WHERE customer_name = 'PolyU';! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+----+
-| id |
-+----+
-| 1  |
-+----+
-\end{lstlisting}\\ \hline
-\textbf{Step 2:} SQL, Retrieve the product ID for the product with attributes "Red, M size" and type "T-shirt".\\
-Execute:\\
-\lstinline!SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Red, M size' AND pt.description = 'T-shirt';! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+----+
-| id |
-+----+
-| 1  |
-+----+
-\end{lstlisting}\\ \hline
-\textbf{Step 3:} SQL, Retrieve the product ID for the product with attributes "Blue, XL size" and type "Sweater"\\
-Execute:\\
-\lstinline!SELECT p.id FROM products p JOIN products_types pt ON p.products_type_id = pt.id WHERE p.attributes = 'Blue, XL size' AND pt.description = 'Sweater';! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+----+
-| id |
-+----+
-| 17 |
-+----+
-\end{lstlisting}\\ \hline
-\textbf{Step 4:} SQL, Create a new order for the customer "PolyU" with the current date and time as the order name.\\
-Execute:\\
-\lstinline!INSERT INTO orders (user_id, order_name, created_at) VALUES ('1', CONCAT('Order', DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')), NOW());! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+-------------------+
-| auto_increment_id |
-+-------------------+
-|         14        |
-+-------------------+
-\end{lstlisting}\\ \hline
-% \textbf{Step 5:} SQL, Retrieve the order ID for the newly created order.\\
-% Execute:\\
-% \lstinline!SELECT id FROM orders WHERE user_id = '1' ORDER BY created_at DESC LIMIT 1;! \\
-% \begin{lstlisting}
-% Results from executing the SQL:
-% +----+
-% | id |
-% +----+
-% | 14 |
-% +----+
-% \end{lstlisting}\\ \hline
-\textbf{Step 5:} SQL, Insert 50 units of the product "Red, M size T-shirt" into the order\\
-Execute:\\
-\lstinline!INSERT INTO order_product (order_id, product_id, number) VALUES ('14', '1', 50);! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+-------------------+
-| auto_increment_id |
-+-------------------+
-|         39        |
-+-------------------+
-\end{lstlisting}\\ \hline
-\textbf{Step 6:} SQL, Insert 30 units of the product "Blue, XL size Sweater" into the order\\
-Execute:\\
-\lstinline!INSERT INTO order_product (order_id, product_id, number) VALUES ('14', '17', 30);! \\
-\begin{lstlisting}
-Results from executing the SQL:
-+-------------------+
-| auto_increment_id |
-+-------------------+
-|         40        |
-+-------------------+
-\end{lstlisting}\\ \hline
-\textbf{Step 7:} Tool, Allocate the cutting and sewing tasks for the newly created order\\
-Execute:\\
-\lstinline! Tool: tool_allocate_task_order, Parameters: {'order_id': 14}!\\
-\begin{lstlisting}
-Results from invoking the tools:
-Product ID 43 (T-shirt)
-Sewing Task:
+Step8: Retrieve the produced WIP ID from the cutting tasks
+SQL `SELECT produced_wip_id FROM cutting_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
 
-Task ID: 96
-Working Group: Premier Sewers
-Planned Number: 50
-Status: Not started
-Materials Allocated:
-100 units of Material ID 10
-200 units of Material ID 2
+Step9: Update the status of the original cutting tasks to 0 (stopped)
+SQL `UPDATE cutting_tasks SET status = 0 WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
 
-Product ID 44 (Sweater)
-Sewing Task:
+\end{lstlisting}\\
+\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
 
-Task ID: 97
-Working Group: Elite Sewers
-Planned Number: 30
-Status: Not started
-Materials Allocated:
-60 units of Material ID 4
-90 units of Material ID 12
+Step10: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 21, 8, 140, 1);`
+
+Step11: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 29, 10, 150, 1);`
+
+Step12: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 13, 12, 130, 1);`
+
+Step13: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 5, 6, 120, 1);`
+
+Step14: Update the status of the original sewing tasks to 0 (stopped)
+SQL `UPDATE sewing_tasks SET status = 0 WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
+
+Step15: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 21, 140, 1);`
+
+Step16: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 29, 150, 1);`
+
+Step17: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 13, 130, 1);`
+
+Step18: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 5, 120, 1);`
+
 \end{lstlisting}\\ 
-% \hline
-% \begin{itemize}[noitemsep,topsep=0pt]
-% \item Order ID: dc111615-3e00-11ef-b3df-0242c0a82002
-% \item Order Name: Order for PolyU on 2024-07-03
-% \item Product ID: p1 (50 pieces of red T-shirt), p17 (30 pieces of blue XL sweater)
-% \item Product Quantity: 50 (red T-shirt), 30 (blue XL sweater)
-% \end{itemize}
-% The order has been successfully created as requested, including 50 pieces of red T-shirt and 30 pieces of blue XL sweater. You can retrieve the order information based on the order name and verify the successful creation of the order. If you have any other questions or need further assistance, please feel free to let me know! \\ 
-\hline
+\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
+Step19: Check material inventory for required materials
+SQL `SELECT pm.material_id, pm.number, wm.left_number FROM product_material pm JOIN warehouse_material wm ON pm.material_id = wm.material_id WHERE pm.product_id IN (SELECT product_id FROM order_product WHERE order_id = 3);`
+
+Step20: Compile the new cutting and sewing group information, new task schedule, material inventory status, and expected completion date into a report.
+Thought `Compile the new cutting and sewing group information, new task schedule, material inventory status, and expected completion date into a report.`
+\end{lstlisting}\\ \hline
 \end{longtable}
 \end{center}
+
 
 
 
