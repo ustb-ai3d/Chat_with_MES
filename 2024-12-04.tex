@@ -559,7 +559,7 @@ For example, the "Hong Kong Polytechnic University" will be transformed to \{cus
 When the set of candidate entities changes, such as when a customer updates their name, it triggers an update to the knowledge base. 
 If the information provided by the user does not match any registered entity, it indicates that the user's query is not recognized, and the CWM will return to generate a question to the user for confirmation.
 
-\begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ },numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+\begin{lstlisting}[style=prompt, label={lst:query_rewrite},caption={ Prompt for rewriting request},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
   (*@\color{red}{\# role}@*):
   You are a professional question optimization model. You can replace entity names in questions with standard entity names.
 
@@ -648,6 +648,21 @@ As demonstrated in prompt~\ref{lst:user_prompt}, the user prompt contains the or
 Additionally, few-shot examples are also appended to the user prompt.
 The content following USER INPUT represents the output from the query rewriter module.
 
+\begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+You are now the following python function: 
+# "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
+"If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
+"please output a list of tool operations with distinct parameters."
+        
+def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
+Only respond with your `return` value. Do not include any other explanatory text in your response.",
+
+(*@\color{blue}{\# Operation}@*)
+INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_tshirt_product_id>', 50)
+
+(*@\color{red}{\# Historical Context}@*)
+\end{lstlisting}
+
 \subsubsection{Operation execution and dynamical parameters retrieval}
 After the LLM generates the initial operations sequence, we employ regex matching to extract the operations command and their types and execute each operation one by one. 
 As shown in Figure 3, the results from executing each operation are appended in a conversation context.
@@ -660,22 +675,6 @@ According to the original request from the user, the LLM-based generator will pr
 The structured records will be automatically organized as tables with the markdown format to give a good reading experience.
 % In most chat tools, this markdown-formatted content is automatically rendered and the user will have a good reading experience.
 
-
-
-% The prompt adheres to the CO-STAR format, as demonstrated in xxx.
-% \lstset{
-%  columns=fixed,       
-%  numbers=left,                                        % 在左侧显示行号
-%  numberstyle=\scriptsize\color{gray},                       % 设定行号格式
-%  frame=none,                                          % 不显示背景边框
-%  backgroundcolor=\color[RGB]{245,245,244},            % 设定背景颜色
-%  keywordstyle=\color[RGB]{40,40,255},                 % 设定关键字颜色
-%  numberstyle=\footnotesize\color{darkgray},           
-%  commentstyle=\it\color[RGB]{0,96,96},                % 设置代码注释的格式
-%  stringstyle=\rmfamily\slshape\color[RGB]{128,0,0},   % 设置字符串格式
-%  showstringspaces=false,                              % 不显示字符串中的空格
-%  language=text,                                        % 设置语言
-% }
 \begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={},aboveskip=0pt, belowskip=0pt]
 You are Chat With MES, a powerful AI assistant, a variant of ChatGPT that can 
 1) decide to invoke some provided tools to solve the query. 
@@ -795,6 +794,10 @@ allocate\_task &
 store\_materials &
   Automatically store materials in a free inventory. &
   \begin{tabular}[c]{@{}l@{}}\textbf{material\_id}: ID of material\\ \textbf{number}: number of stored materials\end{tabular} \\
+  \hline
+get\_busy\_workers &
+  Find all working groups and their task counts. &
+  None \\
   \hline
 complete\_task &\makecell[l]{
   workers reporting the completion of specific production \\ tasks, it automatically adjusts the quantities of finished\\ products in the warehouse.} &

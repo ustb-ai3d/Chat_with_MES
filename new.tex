@@ -929,12 +929,17 @@ store\_materials &
   Automatically store materials in a free inventory. &
   \begin{tabular}[c]{@{}l@{}}\textbf{material\_id}: ID of material\\ \textbf{number}: number of stored materials\end{tabular} \\
   \hline
+get\_busy\_workers &
+  Find all working groups and their task counts. &
+  None \\
+  \hline
 complete\_task &\makecell[l]{
   workers reporting the completion of specific production \\ tasks, it automatically adjusts the quantities of finished\\ products in the warehouse.} &
   \begin{tabular}[c]{@{}l@{}}\textbf{task\_id}: ID of task\\ \textbf{task\_type}: sewing or cutting\\ \makecell[l]{\textbf{quantity}: number of completed  \\ products or work-in-progress}\end{tabular} \\
 \end{tabular}
 }
 \end{table}
+% tool_get_busy_workers
 
 \subsubsection{Requests Dataset}
 Based on the database schema of the MES and the rows inside, we designed a requests dataset including 55 requests covering common operations in a garment factory: placing orders, checking inventory, work assignment, materials allocation, and so on.
