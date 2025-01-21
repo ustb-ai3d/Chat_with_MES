@@ -1,7 +1,7 @@
 
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /dir/2024-12-04.tex   Tue Jan 21 23:56:40 2025
-%DIF ADD /dir/new.tex          Tue Jan 21 23:56:40 2025
+%DIF DEL /dir/2024-12-04.tex   Wed Jan 22 00:03:01 2025
+%DIF ADD /dir/new.tex          Wed Jan 22 00:03:01 2025
 %% 
 %% Copyright 2007-2024 Elsevier Ltd
 %% 
@@ -973,7 +973,7 @@ Certain redundant details are excluded, highlighted in red font.
 The content following USER INPUT represents the output from the query rewriter module.
 }
 
-\DIFaddend In addition to the \DIFdelbegin \DIFdel{textual }\DIFdelend data schema and the description of available tools, \DIFdelbegin \DIFdel{we also incorporate few-short learningby providing }\DIFdelend \DIFaddbegin \DIFadd{CWM needs to understand the production guidelines, such as the order of accessing databases, the format of the data inserted into the table and some definitions and abbreviations in the garment industry.
+\DIFaddend In addition to the \DIFdelbegin \DIFdel{textual }\DIFdelend data schema and the description of available tools, \DIFdelbegin \DIFdel{we also incorporate few-short learning by providing }\DIFdelend \DIFaddbegin \DIFadd{CWM needs to understand the production guidelines, such as the order of accessing databases, the format of the data inserted into the table and some definitions and abbreviations in the garment industry.
 Because each garment factory has customized guidelines and the knowledge base needs to be maintained dynamically, 
 this study employs the training-free few-shot learning~\mbox{%DIFAUXCMD
 \cite{hu2023chatdb} }\hspace{0pt}%DIFAUXCMD
@@ -1003,42 +1003,7 @@ It also provides details on the database schema and available tools, omitting so
 As demonstrated in prompt~\ref{lst:user_prompt}, the user prompt contains the original user query and specifies the output formats.
 Additionally, few-shot examples are also appended to the user prompt.
 The content following USER INPUT represents the output from the query rewriter module.
-}%DIFDELCMD < 
-
-%DIFDELCMD < %%%
-\DIFdelend \begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
-You are now the following python function: 
-# "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
-"If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
-"please output a list of tool operations with distinct parameters."
-        
-def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
-Only respond with your `return` value. Do not include any other explanatory text in your response.",
-
-(*@\color{blue}{\# Operation}@*)
-INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_tshirt_product_id>', 50)
-
-(*@\color{red}{\# Historical Context}@*)
-\end{lstlisting}
-
-\subsubsection{Operation execution and dynamical parameters retrieval}
-After the \DIFdelbegin \DIFdel{LLM generates the initial operations sequence, we employ }\DIFdelend \DIFaddbegin \DIFadd{initial chain of operations are generated, the CWM employs }\DIFaddend regex matching to extract the operations command and their types and execute each operation one by one. 
-\DIFdelbegin \DIFdel{As shown in Figure 3, the results from executing each operation are appended in a conversation context.
-}\DIFdelend Apart from the first operation, \DIFdelbegin \DIFdel{the initial operation command }\DIFdelend \DIFaddbegin \DIFadd{subsequent operation commands }\DIFaddend might contain placeholders, such as "<customer\_id\_step1>", that must be determined based on \DIFdelbegin \DIFdel{intermediate results}\DIFdelend \DIFaddbegin \DIFadd{the context}\DIFaddend .
-Before executing each command, \DIFdelbegin \DIFdel{we identify }\DIFdelend \DIFaddbegin \DIFadd{CWM identifies }\DIFaddend these placeholders and \DIFdelbegin \DIFdel{use LLM again }\DIFdelend \DIFaddbegin \DIFadd{uses LLM with prompt \ref{lst:param_prompt} }\DIFaddend to retrieve the specific parameters from the conversion context to update the operation command.
-\DIFaddbegin \DIFadd{Finally, the operations with parameters are executed by accessing the database and the services of MES.
-As shown in Figure~\ref{fig:tech_multi_step}, the results from executing each operation are appended in a conversation context.
-}\DIFaddend 
-
-\subsection{Response Generation}
-After executing all operations, \DIFaddbegin \DIFadd{the context which consists of }\DIFaddend all intermediate results produced from each operation\DIFdelbegin \DIFdel{will be stacked to a list of strings and }\DIFdelend \DIFaddbegin \DIFadd{, will be }\DIFaddend fed to the Responses Generator. 
-According to the original request from the user, the LLM-based generator will produce the final textual responses.
-The structured records will be automatically organized as tables with the markdown format to give a good reading experience.
-% In most chat tools, this markdown-formatted content is automatically rendered and the user will have a good reading experience.
-
-
-
-\DIFdelbegin %DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={},aboveskip=0pt, belowskip=0pt]
+}%DIFDELCMD < \begin{lstlisting}[style=prompt, label={lst:plan_prompt},caption={},aboveskip=0pt, belowskip=0pt]
 %DIFDELCMD < %%%
 %DIFAUXCMD NEXT
 \DIFmodbegin
@@ -1111,8 +1076,42 @@ The structured records will be automatically organized as tables with the markdo
 \end{lstlisting}
 \DIFmodend %DIFAUXCMD
 %DIFDELCMD < \end{lstlisting}
+%DIFDELCMD < 
+
 %DIFDELCMD < %%%
-\DIFdelend %DIF >  The prompt adheres to the CO-STAR format, as demonstrated in xxx.
+\DIFdelend \begin{lstlisting}[style=prompt, label={lst:param_prompt},caption={Parameters Identification prompt},numberstyle=\scriptsize,aboveskip=0pt, belowskip=0pt]
+You are now the following python function: 
+# "Find useful information in the results of the previous operating statement, and replace <> with the corresponding information. "
+"If the operation type is 'Tool' and the tool must be invoked multiple times with varying parameters, "
+"please output a list of tool operations with distinct parameters."
+        
+def populate_operation_statement(operation_str: str, previous_operation_results: list[list[dict]]) -> list[str]:
+Only respond with your `return` value. Do not include any other explanatory text in your response.",
+
+(*@\color{blue}{\# Operation}@*)
+INSERT INTO order_product (order_id, product_id, number) VALUES ('<order_id>', '<red_tshirt_product_id>', 50)
+
+(*@\color{red}{\# Historical Context}@*)
+\end{lstlisting}
+
+\subsubsection{Operation execution and dynamical parameters retrieval}
+After the \DIFdelbegin \DIFdel{LLM generates the initial operations sequence, we employ }\DIFdelend \DIFaddbegin \DIFadd{initial chain of operations are generated, the CWM employs }\DIFaddend regex matching to extract the operations command and their types and execute each operation one by one. 
+\DIFdelbegin \DIFdel{As shown in Figure 3, the results from executing each operation are appended in a conversation context.
+}\DIFdelend Apart from the first operation, \DIFdelbegin \DIFdel{the initial operation command }\DIFdelend \DIFaddbegin \DIFadd{subsequent operation commands }\DIFaddend might contain placeholders, such as "<customer\_id\_step1>", that must be determined based on \DIFdelbegin \DIFdel{intermediate results}\DIFdelend \DIFaddbegin \DIFadd{the context}\DIFaddend .
+Before executing each command, \DIFdelbegin \DIFdel{we identify }\DIFdelend \DIFaddbegin \DIFadd{CWM identifies }\DIFaddend these placeholders and \DIFdelbegin \DIFdel{use LLM again }\DIFdelend \DIFaddbegin \DIFadd{uses LLM with prompt \ref{lst:param_prompt} }\DIFaddend to retrieve the specific parameters from the conversion context to update the operation command.
+\DIFaddbegin \DIFadd{Finally, the operations with parameters are executed by accessing the database and the services of MES.
+As shown in Figure~\ref{fig:tech_multi_step}, the results from executing each operation are appended in a conversation context.
+}\DIFaddend 
+
+\subsection{Response Generation}
+After executing all operations, \DIFaddbegin \DIFadd{the context which consists of }\DIFaddend all intermediate results produced from each operation\DIFdelbegin \DIFdel{will be stacked to a list of strings and }\DIFdelend \DIFaddbegin \DIFadd{, will be }\DIFaddend fed to the Responses Generator. 
+According to the original request from the user, the LLM-based generator will produce the final textual responses.
+The structured records will be automatically organized as tables with the markdown format to give a good reading experience.
+% In most chat tools, this markdown-formatted content is automatically rendered and the user will have a good reading experience.
+
+
+
+%DIF >  The prompt adheres to the CO-STAR format, as demonstrated in xxx.
 %DIF >  \lstset{
 %DIF >   columns=fixed,       
 %DIF >   numbers=left,                                        % 在左侧显示行号
@@ -1126,11 +1125,12 @@ The structured records will be automatically organized as tables with the markdo
 %DIF >   showstringspaces=false,                              % 不显示字符串中的空格
 %DIF >   language=text,                                        % 设置语言
 %DIF >  }
+\DIFaddbegin 
 
 
 
 
-\section{Experiment}
+\DIFaddend \section{Experiment}
 \label{sec:exp}
 In this section, we develop a simulated garment MES and design 55 questions to evaluate the effectiveness of CWM for manipulating MES. 
 Based on a series of ablation studies, we quantify the improvement by introducing Query Re-writer, Multi-step Operations Generation, and each type of operation.
@@ -1366,117 +1366,6 @@ The CWM demonstrates a strong understanding of the internal relationships betwee
 %DIFDELCMD < \end{figure*}
 %DIFDELCMD < 
 
-%DIFDELCMD < \begin{center}
-%DIFDELCMD < \begin{longtable}{p{390pt}}
-%DIFDELCMD < %%%
-%DIFDELCMD < \caption{%
-{%DIFAUXCMD
-\DIFdel{Example of reorganize production plan}}
-    %DIFAUXCMD
-%DIFDELCMD < \label{tab:case_reorganize_production_plan}\\
-%DIFDELCMD <     \toprule
-%DIFDELCMD <       %%%
-\textbf{\DIFdel{Question:}} %DIFAUXCMD
-%DIFDELCMD < \\
-%DIFDELCMD <        %%%
-\DIFdel{The dress order of Emily requires delivery by April 5, 2024. Please re-arrange the production plan and assign tasks to the task group with the fewest tasks currently. Provide a new production plan.}%DIFDELCMD < \\
-%DIFDELCMD <           \hline
-%DIFDELCMD <           %%%
-\textbf{\DIFdel{Query Rewriting: }}
-          %DIFAUXCMD
-\DIFdel{The <orders.order\_name = 'Emily\_Dress'> order requires delivery by April 5, 2024. Please re-arrange the production plan and assign tasks to the task group with the fewest tasks currently. Provide a new production plan.}%DIFDELCMD < \\
-%DIFDELCMD <  \hline
-%DIFDELCMD < %%%
-\textbf{\DIFdel{Chain of Operations:}}%DIFAUXCMD
-%DIFDELCMD < \\
-%DIFDELCMD < 
-
-%DIFDELCMD < \begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
-%DIFDELCMD < %%%
-%DIFAUXCMD NEXT
-\DIFmodbegin
-\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation},alsolanguage=DIFcode]
-%DIF < Step 1: Retrieve the order ID for the order with the name "Emily_Dress"
-%DIF < SQL `SELECT id FROM orders WHERE order_name = 'Emily_Dress';`
-%DIF < -
-%DIF < Step2: Retrieve the product details related to the order\n["tool_find_order_details, {'order_id': 3}, Find the product details of an order"]
-%DIF < Tool `tool_find_order_details, {'order_id': 3}, Find the product details of an order`
-%DIF < -
-%DIF < Step3: Retrieve the current cutting task's working group ID for the order
-%DIF < SQL `SELECT working_group_id FROM cutting_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
-%DIF < -
-%DIF < Step4: Retrieve the current sewing task's working group ID for the order
-%DIF < SQL `SELECT working_group_id FROM sewing_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
-%DIF < -
-%DIF < Step5: Get the current list of all working groups and their task counts\ntool_get_busy_workers, {}, Get the current list of all working groups and their task counts
-%DIF < Tool `tool_get_busy_workers, {}, Get the current list of all working groups and their task counts`
-%DIF < -
-%DIF < Step6: Compare the task counts of all cutting groups obtained in Step5 and identify the group with the fewest tasks.
-%DIF < Thought `Compare the task counts of all cutting groups obtained in Step5 and identify the group with the fewest tasks.`
-%DIF < -
-%DIF < Step7: Compare the task counts of all sewing groups obtained in Step5 and identify the group with the fewest tasks.
-%DIF < Thought `Compare the task counts of all sewing groups obtained in Step5 and identify the group with the fewest tasks.`
-%DIF < -
-%DIF < Step8: Retrieve the produced WIP ID from the cutting tasks
-%DIF < SQL `SELECT produced_wip_id FROM cutting_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
-%DIF < -
-%DIF < Step9: Update the status of the original cutting tasks to 0 (stopped)
-%DIF < SQL `UPDATE cutting_tasks SET status = 0 WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
-\end{lstlisting}
-\DIFmodend %DIFAUXCMD
-%DIFDELCMD < \end{lstlisting}\\
-%DIFDELCMD < \begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
-%DIFDELCMD < %%%
-%DIFAUXCMD NEXT
-\DIFmodbegin
-\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation},alsolanguage=DIFcode]
-%DIF < -
-%DIF < Step10: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF < SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 21, 8, 140, 1);`
-%DIF < -
-%DIF < Step11: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF < SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 29, 10, 150, 1);`
-%DIF < -
-%DIF < Step12: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF < SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 13, 12, 130, 1);`
-%DIF < -
-%DIF < Step13: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF < SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 5, 6, 120, 1);`
-%DIF < -
-%DIF < Step14: Update the status of the original sewing tasks to 0 (stopped)
-%DIF < SQL `UPDATE sewing_tasks SET status = 0 WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
-%DIF < -
-%DIF < Step15: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF < SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 21, 140, 1);`
-%DIF < -
-%DIF < Step16: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF < SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 29, 150, 1);`
-%DIF < -
-%DIF < Step17: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF < SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 13, 130, 1);`
-%DIF < -
-%DIF < Step18: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF < SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 5, 120, 1);`
-\end{lstlisting}
-\DIFmodend %DIFAUXCMD
-%DIFDELCMD < \end{lstlisting}\\ 
-%DIFDELCMD < \begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
-%DIFDELCMD < %%%
-%DIFAUXCMD NEXT
-\DIFmodbegin
-\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation},alsolanguage=DIFcode]
-%DIF < Step19: Check material inventory for required materials
-%DIF < SQL `SELECT pm.material_id, pm.number, wm.left_number FROM product_material pm JOIN warehouse_material wm ON pm.material_id = wm.material_id WHERE pm.product_id IN (SELECT product_id FROM order_product WHERE order_id = 3);`
-%DIF < -
-%DIF < Step20: Compile the new cutting and sewing group information, new task schedule, material inventory status, and expected completion date into a report.
-%DIF < Thought `Compile the new cutting and sewing group information, new task schedule, material inventory status, and expected completion date into a report.`
-\end{lstlisting}
-\DIFmodend %DIFAUXCMD
-%DIFDELCMD < \end{lstlisting}\\ \hline
-%DIFDELCMD < \end{longtable}
-%DIFDELCMD < \end{center}
-%DIFDELCMD < 
-
 %DIFDELCMD < %%%
 \DIFdelend \begin{center}
 \begin{longtable}{p{390pt}}
@@ -1695,96 +1584,90 @@ This example sufficiently demonstrates CWM's capability to replace the GUI in ME
 %DIF >  All questions  
 
 %DIF >  of fruit shop management records, referred to as the “Fruit Shop Dataset”. This dataset simulates four common operations in a shop: purchasing, selling, changing prices, and goods returns. We ensure that all historical records are valid and do not encounter issues such as negative inventory. We generate 70 records arranged in chronological order, totaling approximately 3.3k tokens, which is within the maximum token length limit of ChatGPT (4096 tokens).
+\DIFaddend 
 
 
 
 
 \begin{center}
 \begin{longtable}{p{390pt}}
-\caption{\DIFadd{Example of reorganize production plan}}
+\caption{Example of reorganize production plan}
     \label{tab:case_reorganize_production_plan}\\
     \toprule
-      \textbf{\DIFadd{Question:}} \\
-       \DIFadd{The dress order of Emily requires delivery by April 5, 2024. Please re-arrange the production plan and assign tasks to the task group with the fewest tasks currently. Provide a new production plan.}\\
+      \textbf{Question:} \\
+       The dress order of Emily requires delivery by April 5, 2024. Please re-arrange the production plan and assign tasks to the task group with the fewest tasks currently. Provide a new production plan.\\
           \hline
-          \textbf{\DIFadd{Query Rewriting: }}
-          \DIFadd{The <orders.order\_name = 'Emily\_Dress'> order requires delivery by April 5, 2024. Please re-arrange the production plan and assign tasks to the task group with the fewest tasks currently. Provide a new production plan.}\\
+          \textbf{Query Rewriting: }
+          The <orders.order\_name = 'Emily\_Dress'> order requires delivery by April 5, 2024. Please re-arrange the production plan and assign tasks to the task group with the fewest tasks currently. Provide a new production plan.\\
  \hline
-\textbf{\DIFadd{Chain of Operations:}}\\
+\textbf{Chain of Operations:}\\
 
-\DIFmodbegin
-\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation},alsolanguage=DIFcode]
-%DIF > Step 1: Retrieve the order ID for the order with the name "Emily_Dress"
-%DIF > SQL `SELECT id FROM orders WHERE order_name = 'Emily_Dress';`
-%DIF > 
-%DIF > Step2: Retrieve the product details related to the order\n["tool_find_order_details, {'order_id': 3}, Find the product details of an order"]
-%DIF > Tool `tool_find_order_details, {'order_id': 3}, Find the product details of an order`
-%DIF > 
-%DIF > Step3: Retrieve the current cutting task's working group ID for the order
-%DIF > SQL `SELECT working_group_id FROM cutting_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
-%DIF > 
-%DIF > Step4: Retrieve the current sewing task's working group ID for the order
-%DIF > SQL `SELECT working_group_id FROM sewing_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
-%DIF > 
-%DIF > Step5: Get the current list of all working groups and their task counts\ntool_get_busy_workers, {}, Get the current list of all working groups and their task counts
-%DIF > Tool `tool_get_busy_workers, {}, Get the current list of all working groups and their task counts`
-%DIF > 
-%DIF > Step6: Compare the task counts of all cutting groups obtained in Step5 and identify the group with the fewest tasks.
-%DIF > Thought `Compare the task counts of all cutting groups obtained in Step5 and identify the group with the fewest tasks.`
-%DIF > 
-%DIF > Step7: Compare the task counts of all sewing groups obtained in Step5 and identify the group with the fewest tasks.
-%DIF > Thought `Compare the task counts of all sewing groups obtained in Step5 and identify the group with the fewest tasks.`
-%DIF > 
-%DIF > Step8: Retrieve the produced WIP ID from the cutting tasks
-%DIF > SQL `SELECT produced_wip_id FROM cutting_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
-%DIF > 
-%DIF > Step9: Update the status of the original cutting tasks to 0 (stopped)
-%DIF > SQL `UPDATE cutting_tasks SET status = 0 WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
-\end{lstlisting}
-\DIFmodend\\
-\DIFmodbegin
-\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation},alsolanguage=DIFcode]
-%DIF > 
-%DIF > Step10: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF > SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 21, 8, 140, 1);`
-%DIF > 
-%DIF > Step11: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF > SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 29, 10, 150, 1);`
-%DIF > 
-%DIF > Step12: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF > SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 13, 12, 130, 1);`
-%DIF > 
-%DIF > Step13: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF > SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 5, 6, 120, 1);`
-%DIF > 
-%DIF > Step14: Update the status of the original sewing tasks to 0 (stopped)
-%DIF > SQL `UPDATE sewing_tasks SET status = 0 WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
-%DIF > 
-%DIF > Step15: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF > SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 21, 140, 1);`
-%DIF > 
-%DIF > Step16: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF > SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 29, 150, 1);`
-%DIF > 
-%DIF > Step17: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF > SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 13, 130, 1);`
-%DIF > 
-%DIF > Step18: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
-%DIF > SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 5, 120, 1);`
-\end{lstlisting}
-\DIFmodend\\ 
-\DIFmodbegin
-\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation},alsolanguage=DIFcode]
-%DIF > Step19: Check material inventory for required materials
-%DIF > SQL `SELECT pm.material_id, pm.number, wm.left_number FROM product_material pm JOIN warehouse_material wm ON pm.material_id = wm.material_id WHERE pm.product_id IN (SELECT product_id FROM order_product WHERE order_id = 3);`
-%DIF > 
-%DIF > Step20: Compile the new cutting and sewing group information, new task schedule, material inventory status, and expected completion date into a report.
-%DIF > Thought `Compile the new cutting and sewing group information, new task schedule, material inventory status, and expected completion date into a report.`
-\end{lstlisting}
-\DIFmodend\\ \hline
+\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
+Step 1: Retrieve the order ID for the order with the name "Emily_Dress"
+SQL `SELECT id FROM orders WHERE order_name = 'Emily_Dress';`
+
+Step2: Retrieve the product details related to the order\n["tool_find_order_details, {'order_id': 3}, Find the product details of an order"]
+Tool `tool_find_order_details, {'order_id': 3}, Find the product details of an order`
+
+Step3: Retrieve the current cutting task's working group ID for the order
+SQL `SELECT working_group_id FROM cutting_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
+
+Step4: Retrieve the current sewing task's working group ID for the order
+SQL `SELECT working_group_id FROM sewing_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
+
+Step5: Get the current list of all working groups and their task counts\ntool_get_busy_workers, {}, Get the current list of all working groups and their task counts
+Tool `tool_get_busy_workers, {}, Get the current list of all working groups and their task counts`
+
+Step6: Compare the task counts of all cutting groups obtained in Step5 and identify the group with the fewest tasks.
+Thought `Compare the task counts of all cutting groups obtained in Step5 and identify the group with the fewest tasks.`
+
+Step7: Compare the task counts of all sewing groups obtained in Step5 and identify the group with the fewest tasks.
+Thought `Compare the task counts of all sewing groups obtained in Step5 and identify the group with the fewest tasks.`
+
+Step8: Retrieve the produced WIP ID from the cutting tasks
+SQL `SELECT produced_wip_id FROM cutting_tasks WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
+
+Step9: Update the status of the original cutting tasks to 0 (stopped)
+SQL `UPDATE cutting_tasks SET status = 0 WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
+\end{lstlisting}\\
+\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
+
+Step10: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 21, 8, 140, 1);`
+
+Step11: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 29, 10, 150, 1);`
+
+Step12: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 13, 12, 130, 1);`
+
+Step13: Create new cutting tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO cutting_tasks (start_time, end_time, working_group_id, order_product_id, produced_wip_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 6, 5, 6, 120, 1);`
+
+Step14: Update the status of the original sewing tasks to 0 (stopped)
+SQL `UPDATE sewing_tasks SET status = 0 WHERE order_product_id IN (SELECT id FROM order_product WHERE order_id = 3);`
+
+Step15: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 21, 140, 1);`
+
+Step16: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 29, 150, 1);`
+
+Step17: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 13, 130, 1);`
+
+Step18: Create new sewing tasks with the new working group ID and set the new deadline to April 5, 2024
+SQL `INSERT INTO sewing_tasks (start_time, end_time, working_group_id, order_product_id, planned_number, status) VALUES (CURRENT_TIMESTAMP, '2024-04-05 23:59:59', 10, 5, 120, 1);`
+\end{lstlisting}\\ 
+\begin{lstlisting}[style=my_operation, label={lst:chain_of_operation}]
+Step19: Check material inventory for required materials
+SQL `SELECT pm.material_id, pm.number, wm.left_number FROM product_material pm JOIN warehouse_material wm ON pm.material_id = wm.material_id WHERE pm.product_id IN (SELECT product_id FROM order_product WHERE order_id = 3);`
+
+Step20: Compile the new cutting and sewing group information, new task schedule, material inventory status, and expected completion date into a report.
+Thought `Compile the new cutting and sewing group information, new task schedule, material inventory status, and expected completion date into a report.`
+\end{lstlisting}\\ \hline
 \end{longtable}
 \end{center}
-\DIFaddend 
 
 
 
