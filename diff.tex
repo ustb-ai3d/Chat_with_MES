@@ -1,7 +1,7 @@
 
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /dir/2024-12-04.tex   Wed Jan 22 20:38:19 2025
-%DIF ADD /dir/new.tex          Wed Jan 22 20:38:19 2025
+%DIF DEL /dir/2024-12-04.tex   Wed Jan 22 20:52:10 2025
+%DIF ADD /dir/new.tex          Wed Jan 22 20:52:10 2025
 %% 
 %% Copyright 2007-2024 Elsevier Ltd
 %% 
@@ -608,12 +608,12 @@ Current RPA systems are most designed to adhere to pre-defined rules and workflo
 These functionalities are typically implemented through drag-and-drop interfaces, screenplay recording, or automation frameworks such as Selenium~\mbox{%DIFAUXCMD
 \cite{sharma2014web}}\hspace{0pt}%DIFAUXCMD
 .
-The systems are intrinsically system-centered, instead of human-centered.
+}\textbf{\DIFadd{The systems are intrinsically system-centered, instead of human-centered.
 Users must passively adhere to the rules and provide specific information, yet they cannot actively express their desires~\mbox{%DIFAUXCMD
 \cite{jain2024smartflow}}\hspace{0pt}%DIFAUXCMD
 .
-Meanwhile, RPA remains dependent on GUI interfaces, the cost of developing GUI is unavoidable.
-Recent years have witnessed remarkable progress in computer vision, LLM, and LLM-Agent, which have opened up new possibilities for integrating LLMs with RPA systems towards enabling them to perceive and autonomously interact with complex applications.
+Meanwhile, RPA remains dependent on GUI interfaces, the cost of developing GUI is unavoidable.}}
+\DIFadd{Recent years have witnessed remarkable progress in computer vision, LLM, and LLM-Agent, which have opened up new possibilities for integrating LLMs with RPA systems towards enabling them to perceive and autonomously interact with complex applications.
 %DIF >  The system is fundamentally centered around itself rather than the user. Users must adhere to set regulations and supply precise data, yet they lack the ability to actively convey their desires.
 %DIF >  , particularly in domains where explainability and causability are crucial. 
 AI }\DIFaddend can be incorporated into the interface layer for MES to create better user-friendly experiences. 
@@ -622,8 +622,11 @@ extraction in manufacturing.
 Their developed prototype shows that MES users can benefit from an interactive chatbot by creating more dynamic and free experiences.
 Colabianchi et al.~\cite{colabianchi2023human} presented an integrated conceptual architecture to develop industrial conversational agents and illustrated the elements needed for the development. 
 They also overlooked the application of LLMs in manufacturing conversation systems.
-The research discussed above primarily stays at the conceptual or prototype development stage. 
+\DIFdelbegin \DIFdel{The research discussed above primarily stays at the conceptual or prototype development stage. 
 A significant gap exists between the conceptual design and the development of a fully operational conversational system.
+}\DIFdelend \DIFaddbegin \textbf{\DIFadd{The research discussed above primarily stays at the conceptual or prototype development stage. 
+A significant gap exists between the conceptual design and the development of a fully operational conversational manufacturing system.}}
+\DIFaddend 
 
 \subsection{LLM-based Text2SQL}
 One primary function of MES is managing the production data by accessing the production databases. 
@@ -638,12 +641,13 @@ In practical applications, it must incorporate business-related prior knowledge 
 }\DIFaddend By designing specific workflows and incorporating additional \DIFdelbegin \DIFdel{prior }\DIFdelend knowledge through prompt engineering, the performance of Text2SQL in practical applications has been improved significantly. 
 As an extension of \DIFdelbegin \DIFdel{NL2SQL}\DIFdelend \DIFaddbegin \DIFadd{Text2SQL}\DIFaddend , ChatBI is proposed to convert Natural Language to Business Intelligence~\cite{lian2024chatbi}, effectively addressing challenges related to \DIFdelbegin \DIFdel{limited interaction modes and }\DIFdelend a large number of columns. 
 To address complex queries requiring multi-step database operations rather than a single SQL command, ChatDB~\cite{hu2023chatdb} and Din-SQL~\cite{pourreza2024din} augment LLMs to generate multi-step and dynamical SQL instructions for database manipulation. 
-\DIFaddbegin \DIFadd{However, existing LLM-based business intelligence systems are generally applied in non-intrusive data query scenarios to avoid the catastrophic consequences of hallucinatory data editing.
+\DIFaddbegin \textbf{\DIFadd{However, existing LLM-based business intelligence systems are generally applied in non-intrusive data query scenarios to avoid the catastrophic consequences of hallucinatory data editing.
 In our study, manipulating MES inevitably involves a number of update, insert, and delete operations. 
 The chosen operations and their order must be absolutely accurate. 
 This places extremely high requirements on the agent. 
-Not only does the agent need to understand all database's schemas and their relationships, but it also needs to follow the production guidelines.
-}\DIFaddend % As a fundamental technology, Text2SQL is still distant from enabling conversational interactions with real Manufacturing Execution System (MES) databases. 
+Not only does the agent need to understand all database's schema and their relationships, but it also needs to follow the production guidelines.
+The experimental section demonstrates that current leading general LLMs lack the ability to manage these intricate tasks.}}
+\DIFaddend % As a fundamental technology, Text2SQL is still distant from enabling conversational interactions with real Manufacturing Execution System (MES) databases. 
 \DIFdelbegin \DIFdel{Within the operational framework of a Manufacturing Execution System (MES), addressing user requests entails the complex task of dataset record manipulation, which proves to be significantly more challenging.
 }\DIFdelend %DIF >  Within the operational framework of a Manufacturing Execution System (MES), addressing user requests entails the complex task of dataset record manipulation, which proves to be significantly more challenging.
 
@@ -709,9 +713,13 @@ In the realm of industrial sustainability, Wu introduces the ProcessCarbonAgent 
 % This innovative system exemplifies the application of LLMs in environmental management, providing manufacturers with AI-driven insights to meet ever-increasing sustainability goals. 
 These studies illustrate the transformative influence LLMs hold within numerous aspects of manufacturing, ranging from robot manipulation and design collaboration to supply chain enhancement and cause analyses.
 The LLM functions not only as a chatbot or writer but also as a coordinator that integrates services and processes information from multiple sources.
-Table~\ref{tab:comparison} highlights the differentiating factors of CWM in comparison to preceding research efforts. 
+\DIFdelbegin \DIFdel{Table~\ref{tab:comparison} highlights the differentiating factors of CWM in comparison to preceding research efforts. 
 Given that each related work addresses unique research questions, we analyze the capabilities of LLMs that are employed. 
 CWM represents the first dialogue-oriented open-source framework endowed with functionalities including Code Generation, database access, and Tool invocation.
+}\DIFdelend \DIFaddbegin \textbf{\DIFadd{Table~\ref{tab:comparison} highlights the differentiating factors of CWM in comparison to preceding research efforts. 
+Given that each related work addresses unique research questions, we analyze the capabilities of LLMs that are employed. 
+CWM represents the first dialogue-oriented open-source framework endowed with functionalities including Code Generation, database access, and Tool invocation.}}
+\DIFaddend 
 
 
 \begin{table}[t]
@@ -1096,7 +1104,6 @@ Based on \DIFdelbegin \DIFdel{a series of ablation studies, we quantify the impr
 This section provides an in-depth introduction to the experimental design and results.
 }\DIFdelend \DIFaddbegin \DIFadd{an existing, well-established garment MES platform, we simulate the operational processes of a clothing factory and generate simulated raw manufacturing system data. 
 Building upon this experimental platform and dataset, we simulate common requests when users utilize an MES and investigate whether CWM can effectively comprehend and process various typical business requests described in natural language in the absence of a graphical user interface (GUI). 
-%DIF >  With limited external services and the permissions of accessing database, we explore the behaviors and the accuracy that CWM operates on the MES system and database to address users' requests and.
 With restricted external service access and database permissions, we examine CWM's behavior and accuracy in operating within the MES system and database to fulfill user requests.
 }
 
@@ -1113,7 +1120,7 @@ Multi-step operations \DIFdelbegin \DIFdel{generation }\DIFdelend \DIFaddbegin \
 % To adapt to the use case of CWM and enable quantitative comparisons with other baselines, 
 % we built a simple simulated garment MES by referencing a similar product in Huawei Cloud
 To accommodate the utilization scenarios of CWM and facilitate quantitative comparisons with benchmarks, we developed a simulated garment MES by drawing upon a comparable product available in Huawei Cloud
-~\footnote{\href{https://marketplace.huaweicloud.com/contents/da115457-cf31-47e1-bcff-965e5469d360\#productid=00301-608119-0--0}{YiZhi MES garment intelligent production management platform in HUAWEI CLOUD}}.
+\DIFdelbegin \DIFdel{~}\DIFdelend \footnote{\href{https://marketplace.huaweicloud.com/contents/da115457-cf31-47e1-bcff-965e5469d360\#productid=00301-608119-0--0}{YiZhi MES garment intelligent production management platform in HUAWEI CLOUD}}.
 The constructed MES system incorporates the fundamental management components typical of garment manufacturing facilities, encompassing orders, customers, workers, materials, cutting operations, and sewing operations. 
 The database in this simulated MES is a relational database involving 16 tables.
 Their relations and foreign keys are shown in the ER diagram \ref{fig:er_diagram}.
@@ -1132,7 +1139,34 @@ Given that the MES serves as a simulated platform for demonstration purposes, on
 \begin{table}[t]
 \caption{Available tools in the simulated garment MES}
 \label{tab:tools}
-\resizebox{\textwidth}{!}{
+\DIFdelbeginFL %DIFDELCMD < \resizebox{\textwidth}{!}{
+%DIFDELCMD < \begin{tabular}{c|l|l}
+%DIFDELCMD < \textbf{Tool} &
+%DIFDELCMD <   \multicolumn{1}{|c|}{\textbf{Description}} &
+%DIFDELCMD <   \multicolumn{1}{c}{\textbf{Parameters}} \\
+%DIFDELCMD <   \hline
+%DIFDELCMD < find\_order\_details &\makecell[l]{
+%DIFDELCMD <   Find the product details of an order by the order ID.} &
+%DIFDELCMD <   \textbf{order\_id}: ID of order\\ \hline
+%DIFDELCMD < allocate\_task &
+%DIFDELCMD <   Automatically allocate product order tasks to workers &
+%DIFDELCMD <   \begin{tabular}[c]{@{}l@{}}\textbf{order\_id}: ID of order\\ \textbf{order\_name}: name of order\end{tabular} \\
+%DIFDELCMD <   \hline
+%DIFDELCMD < store\_materials &
+%DIFDELCMD <   Automatically store materials in a free inventory. &
+%DIFDELCMD <   \begin{tabular}[c]{@{}l@{}}\textbf{material\_id}: ID of material\\ \textbf{number}: number of stored materials\end{tabular} \\
+%DIFDELCMD <   \hline
+%DIFDELCMD < get\_busy\_workers &
+%DIFDELCMD <   Find all working groups and their task counts. &
+%DIFDELCMD <   None \\
+%DIFDELCMD <   \hline
+%DIFDELCMD < complete\_task &\makecell[l]{
+%DIFDELCMD <   workers reporting the completion of specific production \\ tasks, it automatically adjusts the quantities of finished\\ products in the warehouse.} &
+%DIFDELCMD <   \begin{tabular}[c]{@{}l@{}}\textbf{task\_id}: ID of task\\ \textbf{task\_type}: sewing or cutting\\ \makecell[l]{\textbf{quantity}: number of completed  \\ products or work-in-progress}\end{tabular} \\
+%DIFDELCMD < \end{tabular}
+%DIFDELCMD < }
+%DIFDELCMD < %%%
+\DIFdelendFL \DIFaddbeginFL \resizebox{\textwidth}{!}{
 \begin{tabular}{c|l|l}
 \textbf{Tool} &
   \multicolumn{1}{|c|}{\textbf{Description}} &
@@ -1149,16 +1183,17 @@ store\_materials &
   Automatically store materials in a free inventory. &
   \begin{tabular}[c]{@{}l@{}}\textbf{material\_id}: ID of material\\ \textbf{number}: number of stored materials\end{tabular} \\
   \hline
-get\_busy\_workers &
-  Find all working groups and their task counts. &
-  None \\
-  \hline
+
 complete\_task &\makecell[l]{
   workers reporting the completion of specific production \\ tasks, it automatically adjusts the quantities of finished\\ products in the warehouse.} &
   \begin{tabular}[c]{@{}l@{}}\textbf{task\_id}: ID of task\\ \textbf{task\_type}: sewing or cutting\\ \makecell[l]{\textbf{quantity}: number of completed  \\ products or work-in-progress}\end{tabular} \\
+  \hline
+  get\_busy\_workers &
+  Find all working groups and their task counts. &
+  None \\
 \end{tabular}
 }
-\end{table}
+\DIFaddendFL \end{table}
 %DIF >  tool_get_busy_workers
 
 \subsubsection{Requests Dataset}
@@ -1233,10 +1268,10 @@ All the LLMs used in CWM, including the query rewriting module, multi-step opera
 In section \ref{sec:ablation}, ablation studies were conducted to evaluate the selection of the foundational LLM. 
 The agent responsible for the coordination of the provided tools is implemented utilizing the LangChain framework. 
 % The foundational functions, which encompass chatting, summarizing, and generating multi-step operations, are developed using the OpenAI library.
-We use Dify~\footnote{\href{https://github.com/langgenius/dify}{dify.ai}} to construct the graphical chatting window.
+We use Dify\DIFdelbegin \DIFdel{~}\DIFdelend \footnote{\href{https://github.com/langgenius/dify}{dify.ai}} to construct the graphical chatting window.
 % The graphical chatting window is implemented by Dify~\footnote{\href{https://github.com/langgenius/dify}{dify.ai}}.
-The source code of CWM, along with the simulated MES and benchmark requests, is publicly accessible in ~\footnote{\href{https://github.com/y18810919727/CWM}{https://github.com/y18810919727/CWM}}.
-A test website is provided for convenient access and experience~\footnote{\href{https://dify.ai-fashion.cn/chat/muYb1xmFOw50PPWM}{Test website of the CWM}}.
+The source code of CWM, along with the simulated MES and benchmark requests, is publicly accessible \DIFdelbegin \DIFdel{in ~}\DIFdelend \footnote{\href{https://github.com/y18810919727/CWM}{https://github.com/y18810919727/CWM}}.
+A test website is provided for convenient access and experience\DIFdelbegin \DIFdel{~}\DIFdelend \footnote{\href{https://dify.ai-fashion.cn/chat/muYb1xmFOw50PPWM}{Test website of the CWM}}.
 
 
 
@@ -1480,8 +1515,7 @@ To compile the calculated quantities from Step 5 into a dictionary format, we wi
 \end{longtable}
 \end{center}
 
-\DIFdelbegin \DIFdel{The second example involves the task of querying and summarizing the inventory of materials within the warehouse, as illustrated in Table ~\ref{tab:case_query_material}. 
-}\DIFdelend \DIFaddbegin \begin{center}[t]
+\DIFdelbegin \DIFdel{The second example involves the task of querying and summarizing the inventory of materials within the warehouse, as illustrated in }\DIFdelend \DIFaddbegin \begin{center}[t]
 \begin{longtable}{p{390pt}}
 \caption{\DIFadd{Example of querying the material usage(without Multi-step Dynamical Operations Generation)}}
     \label{tab:case_query_material_without_muti_step}\\
@@ -1517,7 +1551,8 @@ To compile the calculated quantities from Step 5 into a dictionary format, we wi
 \end{longtable}
 \end{center}
 \DIFadd{Before presenting the quantitative evaluation results, this section provides two examples to demonstrate how CWM handles a user's request.
-Table~\ref{tab:case_place_order} and \ref{tab:case_query_material_without_muti_step} compare CWM to the baseline GPT-4 using a sample request, by analyzing a sample request to query the raw materials consumed for orders in June 2024.
+}\DIFaddend Table~\ref{tab:case_query_material} \DIFdelbegin \DIFdel{. 
+}\DIFdelend \DIFaddbegin \DIFadd{and \ref{tab:case_query_material_without_muti_step} compare CWM to the baseline GPT-4 using a sample request, by analyzing a sample request to query the raw materials consumed for orders in June 2024.
 %DIF >  The second example involves the task of querying and summarizing the inventory of materials within the warehouse, as illustrated in Table ~\ref{tab:case_query_material}. 
 }\DIFaddend Given that the total material usage is calculated by aggregating the individual usage of each product within each order, a mathematical calculation is necessary to analyze the data retrieved from the previous steps. 
 Compared to the previous example, the planned chain of operations includes two 'Thought' steps. 
@@ -2006,14 +2041,14 @@ This study preliminarily implements a chatting interface of MES as a demonstrati
 However, it is still far from being applicable in real factory settings and replacing the traditional GUI interfaces.
 Three critical issues need to be discussed and addressed for future improvement.
 
-\textbf{Balance between Accuracy, Generality, and Token usage}
+\textbf{\DIFaddbegin \DIFadd{1. }\DIFaddend Balance between Accuracy, Generality, and Token usage}
 \DIFdelbegin \DIFdel{execution }\DIFdelend \DIFaddbegin 
 
 \DIFadd{Execution }\DIFaddend accuracy can be improved by designing more precise workflows or incorporating additional few-shot examples in prompts. However, this approach is akin to patching, which requires significant manpower and cannot be easily generalized to other MES systems. Additionally, complex workflows or lengthy prompts lead to high LLM token consumption.
 % A more extensible 
 The CWM is expected to evolve into a more extensible and dynamic framework that can understand database \DIFdelbegin \DIFdel{schemas and production business processes }\DIFdelend \DIFaddbegin \DIFadd{schema and production guidelines }\DIFaddend at a lower cost.
 
-\textbf{Who should be responsible for incorrect operations?}
+\textbf{\DIFaddbegin \DIFadd{2. }\DIFaddend Who should be responsible for incorrect operations?}
 \DIFaddbegin 
 
 \DIFaddend A typical MES requires a confirmation step before performing any data adjustment operations.
@@ -2026,8 +2061,10 @@ A viable solution is to incorporate a confirmation function in the chat window, 
 to forecast the possible outcome under the hypothetical input requests.
 Upon the user's affirmative }\DIFaddend "YES\DIFdelbegin \DIFdel{,}\DIFdelend " \DIFdelbegin \DIFdel{they should assume responsibility for any potential consequences}\DIFdelend \DIFaddbegin \DIFadd{during the confirmation phase, responsibility for the action and any outcomes is assumed by the user}\DIFaddend .
 
-\textbf{Speaks little but is willing to express a lot.}
-% A significant issue appears in our beta testing.
+\textbf{\DIFaddbegin \DIFadd{3. }\DIFaddend Speaks little but is willing to express a lot.}
+\DIFaddbegin 
+
+\DIFaddend % A significant issue appears in our beta testing.
 % In contrast to the traditional MES user interface, where developers can specify required fields for each submitted form, users of CWM are often reluctant to provide detailed operational information due to the unrestricted interaction mode.
 In the traditional MES user interface, users must provide complete information in the submitted form, as input fields are typically set as mandatory by developers.
 In CWM, the free interaction mode can lead users to become lax and inattentive in providing sufficient information.
