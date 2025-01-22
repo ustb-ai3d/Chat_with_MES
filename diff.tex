@@ -1,7 +1,7 @@
 
 %DIF LATEXDIFF DIFFERENCE FILE
-%DIF DEL /dir/2024-12-04.tex   Wed Jan 22 00:52:08 2025
-%DIF ADD /dir/new.tex          Wed Jan 22 00:52:08 2025
+%DIF DEL /dir/2024-12-04.tex   Wed Jan 22 13:04:39 2025
+%DIF ADD /dir/new.tex          Wed Jan 22 13:04:39 2025
 %% 
 %% Copyright 2007-2024 Elsevier Ltd
 %% 
@@ -1501,7 +1501,7 @@ First, the description of the order "dress order of Emily" is non-standardized r
 In our simulated MES, the standardized order name is "Emily\_Dress".
 CWM is required to identify the standardized entity names and formulate the appropriate retrieval SQL utilizing "Emily\_Dress". 
 The second issue is the CWM must interpret the ambiguous reference, "the group with the minimum number of tasks".
-The third challenge is the dependence on a series of complex operations to handle this request, encompassing multi-step queries, invoking tools and thoughts across various tables.
+The third challenge is CWM needs to understand the business guidelines of the factory, available tools (services), and the database schema, in order to autonomously plan a series of interdependent operations to process the request.
 }
 
 \DIFadd{CWM decomposed this task into 20 steps, including 15 SQL operations, 2 Tool operations, and 3 Thought operations. 
